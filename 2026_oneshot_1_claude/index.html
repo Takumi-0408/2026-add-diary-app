@@ -1,0 +1,2745 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ぽけNS — なりきり SNS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Kaisei+Decol&family=Press+Start+2P&family=Yomogi&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --color-paper: #efe9d9;
+  --color-paper2: #faf5e6;
+  --color-ink: #1a1612;
+  --color-ink-soft: #5a554a;
+  --color-ink-faint: #a39e8e;
+  --color-rule: #c8c0a8;
+  --color-grass: #5b8a3a;
+  --color-grass-soft: #cfe1b8;
+  --color-coral: #d97757;
+  --color-sun: #e8b94a;
+  --color-sky: #7a9eb9;
+  --color-pink: #d68fa2;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-jp: 'DotGothic16', monospace;
+  --font-hand: 'Yomogi', cursive;
+  --font-narrative: 'Kaisei Decol', serif;
+}
+* { box-sizing: border-box; }
+*::before, *::after { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-jp);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+body[data-fi="mid"] {
+  background: var(--color-paper);
+}
+button { font-family: inherit; border: none; background: none; padding: 0; cursor: pointer; color: inherit; }
+input, textarea { font-family: inherit; color: inherit; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+.c-frame {
+  width: 360px;
+  height: 720px;
+  margin: 24px auto;
+  border: 1.5px solid var(--color-ink);
+  border-radius: 14px;
+  background: var(--color-paper2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 6px 20px rgba(26, 22, 18, 0.08);
+}
+.c-frame__main {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.c-chromebar {
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: var(--color-ink-soft);
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--color-rule);
+  background: var(--color-paper2);
+  flex-shrink: 0;
+}
+.c-appbar {
+  height: 36px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 10px;
+  gap: 8px;
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  color: var(--color-ink);
+  border-bottom: 1px solid var(--color-rule);
+  background: var(--color-paper2);
+  flex-shrink: 0;
+}
+.c-appbar__left { justify-self: start; display: flex; align-items: center; gap: 6px; }
+.c-appbar__center { justify-self: center; text-align: center; }
+.c-appbar__right { justify-self: end; display: flex; align-items: center; gap: 6px; }
+.c-appbar__btn {
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+.c-appbar__btn--soft { color: var(--color-ink-soft); }
+.c-appbar__btn--accent { color: var(--color-grass); }
+.c-tabbar {
+  height: 44px;
+  display: flex;
+  border-top: 1px solid var(--color-rule);
+  background: var(--color-paper2);
+  flex-shrink: 0;
+}
+.c-tabbar__item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+.c-tabbar__item.is-active { color: var(--color-ink); }
+.c-postcard {
+  border: 1.5px solid var(--color-ink-soft);
+  border-radius: 6px;
+  padding: 10px;
+  background: var(--color-paper2);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.c-postcard__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.c-postcard__header > .c-postcard__meta-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.c-postcard__user {
+  font-family: var(--font-jp);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.c-postcard__meta {
+  font-family: var(--font-jp);
+  font-size: 9px;
+  color: var(--color-ink-soft);
+}
+.c-postcard__menu {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  align-self: flex-start;
+  padding: 2px 4px;
+}
+.c-postcard__body {
+  font-family: var(--font-hand);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.c-postcard__photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--color-rule);
+  border-radius: 4px;
+  background-color: var(--color-paper);
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0,
+    transparent 6px,
+    rgba(90, 85, 74, 0.18) 6px,
+    rgba(90, 85, 74, 0.18) 7px
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--color-ink-soft);
+}
+.c-postcard__reactions {
+  display: flex;
+  gap: 12px;
+  font-family: var(--font-jp);
+  font-size: 10px;
+  color: var(--color-ink-soft);
+}
+.c-postcard__reactions > span { display: inline-flex; align-items: center; gap: 3px; }
+.c-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-family: var(--font-jp);
+  font-size: 9px;
+  border: 1px solid var(--color-ink-soft);
+  background: transparent;
+  color: var(--color-ink-soft);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.c-pill--grass { color: var(--color-grass); border-color: var(--color-grass); }
+.c-pill--bug { color: var(--color-grass); border-color: var(--color-grass); }
+.c-pill--fire { color: var(--color-coral); border-color: var(--color-coral); }
+.c-pill--fighting { color: var(--color-coral); border-color: var(--color-coral); }
+.c-pill--dragon { color: var(--color-coral); border-color: var(--color-coral); }
+.c-pill--water { color: var(--color-sky); border-color: var(--color-sky); }
+.c-pill--flying { color: var(--color-sky); border-color: var(--color-sky); }
+.c-pill--ice { color: var(--color-sky); border-color: var(--color-sky); }
+.c-pill--electric { color: var(--color-sun); border-color: var(--color-sun); }
+.c-pill--ground { color: var(--color-sun); border-color: var(--color-sun); }
+.c-pill--poison { color: var(--color-pink); border-color: var(--color-pink); }
+.c-pill--psychic { color: var(--color-pink); border-color: var(--color-pink); }
+.c-pill--fairy { color: var(--color-pink); border-color: var(--color-pink); }
+.c-pill--normal { color: var(--color-ink-soft); border-color: var(--color-ink-soft); }
+.c-pill--rock { color: var(--color-ink-soft); border-color: var(--color-ink-soft); }
+.c-pill--ghost { color: var(--color-ink-soft); border-color: var(--color-ink-soft); }
+.c-pill--steel { color: var(--color-ink-soft); border-color: var(--color-ink-soft); }
+.c-pill--dark { color: var(--color-ink); border-color: var(--color-ink); }
+.c-pill--solid { color: #ffffff; }
+.c-pill--solid.c-pill--grass { background: var(--color-grass); border-color: var(--color-grass); }
+.c-pill--solid.c-pill--bug { background: var(--color-grass); border-color: var(--color-grass); }
+.c-pill--solid.c-pill--fire { background: var(--color-coral); border-color: var(--color-coral); }
+.c-pill--solid.c-pill--fighting { background: var(--color-coral); border-color: var(--color-coral); }
+.c-pill--solid.c-pill--dragon { background: var(--color-coral); border-color: var(--color-coral); }
+.c-pill--solid.c-pill--water { background: var(--color-sky); border-color: var(--color-sky); }
+.c-pill--solid.c-pill--flying { background: var(--color-sky); border-color: var(--color-sky); }
+.c-pill--solid.c-pill--ice { background: var(--color-sky); border-color: var(--color-sky); }
+.c-pill--solid.c-pill--electric { background: var(--color-sun); border-color: var(--color-sun); }
+.c-pill--solid.c-pill--ground { background: var(--color-sun); border-color: var(--color-sun); }
+.c-pill--solid.c-pill--poison { background: var(--color-pink); border-color: var(--color-pink); }
+.c-pill--solid.c-pill--psychic { background: var(--color-pink); border-color: var(--color-pink); }
+.c-pill--solid.c-pill--fairy { background: var(--color-pink); border-color: var(--color-pink); }
+.c-pill--solid.c-pill--normal { background: var(--color-ink-soft); border-color: var(--color-ink-soft); }
+.c-pill--solid.c-pill--rock { background: var(--color-ink-soft); border-color: var(--color-ink-soft); }
+.c-pill--solid.c-pill--ghost { background: var(--color-ink-soft); border-color: var(--color-ink-soft); }
+.c-pill--solid.c-pill--steel { background: var(--color-ink-soft); border-color: var(--color-ink-soft); }
+.c-pill--solid.c-pill--dark { background: var(--color-ink); border-color: var(--color-ink); }
+.c-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1.25px solid var(--color-ink);
+  background: var(--color-grass-soft);
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+.c-avatar > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.c-avatar--sm { width: 24px; height: 24px; }
+.c-avatar--md { width: 36px; height: 36px; }
+.c-avatar--lg { width: 72px; height: 72px; }
+.c-avatar__placeholder {
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: var(--color-ink-soft);
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+.c-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--color-ink);
+  background: var(--color-paper2);
+  color: var(--color-ink);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  transition: transform 0.08s ease, opacity 0.12s ease;
+  user-select: none;
+}
+.c-button:active { transform: scale(0.97); }
+.c-button--primary {
+  background: var(--color-grass);
+  border-color: var(--color-grass);
+  color: #ffffff;
+}
+.c-button--secondary {
+  background: transparent;
+  border: 1.5px solid var(--color-ink);
+  color: var(--color-ink);
+}
+.c-button--block { width: 100%; }
+.c-button.is-disabled,
+.c-button:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.c-segment {
+  display: flex;
+  border: 1.25px solid var(--color-ink-soft);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--color-paper2);
+}
+.c-segment__item {
+  flex: 1;
+  padding: 6px 0;
+  text-align: center;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  border-right: 1px dashed var(--color-ink-soft);
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+.c-segment__item:last-child { border-right: none; }
+.c-segment__item.is-active {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.c-grasstile {
+  background-color: var(--color-grass-soft);
+  background-image:
+    repeating-linear-gradient(45deg, var(--color-grass-soft) 0, var(--color-grass-soft) 4px, #b8d29c 4px, #b8d29c 5px),
+    repeating-linear-gradient(135deg, transparent 0, transparent 4px, rgba(91, 138, 58, 0.18) 4px, rgba(91, 138, 58, 0.18) 5px);
+  border: 1.25px solid var(--color-grass);
+  border-radius: 10px;
+  position: relative;
+}
+.c-note {
+  font-family: var(--font-hand);
+  font-size: 11px;
+  color: var(--color-coral);
+  line-height: 1.4;
+  position: absolute;
+}
+.c-note--inline {
+  position: static;
+}
+.c-narrative {
+  font-family: var(--font-narrative);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-ink);
+}
+.c-narrative--sm {
+  font-size: 13px;
+}
+.c-narrative em, .c-narrative strong {
+  color: var(--color-coral);
+  font-style: normal;
+  font-weight: inherit;
+}
+/* === オンボーディング: タイトル === */
+.s-onboarding-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px 16px;
+  height: 100%;
+  text-align: center;
+}
+.s-onboarding-title__logo {
+  font-family: var(--font-pixel);
+  font-size: 18px;
+  line-height: 1.4;
+  letter-spacing: 1px;
+  color: var(--color-ink);
+  text-align: center;
+  white-space: pre-line;
+}
+.s-onboarding-title__sub {
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: var(--color-ink-soft);
+  text-align: center;
+  line-height: 1.5;
+}
+.s-onboarding-title__hero {
+  width: 160px;
+  height: 160px;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      var(--color-grass-soft) 0 6px,
+      var(--color-paper2) 6px 12px
+    );
+  border: 1.25px solid var(--color-ink-soft);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--color-ink);
+  letter-spacing: 1px;
+}
+.s-onboarding-title__buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+.s-onboarding-title__link {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  color: var(--color-ink-soft);
+  text-align: center;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+/* === オンボーディング: くさむら === */
+.s-onboarding-grass {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 14px;
+  height: 100%;
+}
+.s-onboarding-grass__copy {
+  font-family: var(--font-narrative);
+  font-size: 14px;
+  color: var(--color-ink);
+  line-height: 1.6;
+  text-align: center;
+}
+.s-onboarding-grass__copy .is-emph {
+  color: var(--color-coral);
+  font-weight: bold;
+}
+.s-onboarding-grass__tile {
+  position: relative;
+  min-height: 240px;
+  height: 50%;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.s-onboarding-grass__symbol {
+  font-family: var(--font-pixel);
+  font-size: 24px;
+  color: var(--color-ink);
+  letter-spacing: 2px;
+  z-index: 2;
+}
+.s-onboarding-grass__sfx {
+  position: absolute;
+  font-family: var(--font-hand);
+  font-size: 11px;
+  color: var(--color-coral);
+  z-index: 3;
+  pointer-events: none;
+}
+.s-onboarding-grass__sfx--1 { top: 12%; left: 14%; transform: rotate(-8deg); }
+.s-onboarding-grass__sfx--2 { top: 22%; right: 16%; transform: rotate(6deg); }
+.s-onboarding-grass__sfx--3 { bottom: 18%; left: 22%; transform: rotate(4deg); }
+.s-onboarding-grass__sfx--4 { bottom: 14%; right: 18%; transform: rotate(-6deg); }
+.s-onboarding-grass__hint {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  color: var(--color-ink-soft);
+  text-align: center;
+}
+.s-onboarding-grass__buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.s-onboarding-grass .is-shaking {
+  animation: pokens-shake 0.4s ease-in-out 3;
+}
+@keyframes pokens-shake {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-3px); }
+  50%  { transform: translateX(3px); }
+  75%  { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
+
+/* === オンボーディング: エンカウント === */
+.s-onboarding-encounter {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 14px;
+  height: 100%;
+}
+.s-onboarding-encounter__head {
+  font-family: var(--font-narrative);
+  font-size: 14px;
+  color: var(--color-ink);
+  line-height: 1.5;
+  text-align: center;
+}
+.s-onboarding-encounter__head .is-emph {
+  color: var(--color-coral);
+  font-weight: bold;
+}
+.s-onboarding-encounter__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.s-onboarding-encounter__grid-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.s-onboarding-encounter__grid-bottom {
+  display: block;
+}
+.s-onboarding-encounter__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1.25px solid var(--color-ink-soft);
+  border-radius: 8px;
+  padding: 8px;
+  background: var(--color-paper);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.s-onboarding-encounter__card:hover,
+.s-onboarding-encounter__card.is-selected {
+  border-color: var(--color-grass);
+  background: var(--color-grass-soft);
+}
+.s-onboarding-encounter__card--wide {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+}
+.s-onboarding-encounter__card__sprite {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  display: block;
+}
+.s-onboarding-encounter__card__name {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--color-ink);
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+.s-onboarding-encounter__card__types {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  justify-content: center;
+}
+.s-onboarding-encounter__hint {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  color: var(--color-ink-soft);
+  text-align: center;
+}
+.s-onboarding-encounter__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+
+/* === オンボーディング: 命名 === */
+.s-onboarding-naming {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 14px;
+  height: 100%;
+}
+.s-onboarding-naming__head {
+  font-family: var(--font-narrative);
+  font-size: 13px;
+  color: var(--color-ink);
+  line-height: 1.5;
+  text-align: center;
+}
+.s-onboarding-naming__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 10px;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      var(--color-grass-soft) 0 6px,
+      var(--color-paper2) 6px 12px
+    );
+  border: 1.25px solid var(--color-ink-soft);
+}
+.s-onboarding-naming__sprite {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  display: block;
+}
+.s-onboarding-naming__species {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  color: var(--color-ink);
+  letter-spacing: 0.5px;
+}
+.s-onboarding-naming__types {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  justify-content: center;
+}
+.s-onboarding-naming__input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.s-onboarding-naming__label {
+  font-family: var(--font-jp);
+  font-size: 11px;
+  color: var(--color-ink);
+}
+.s-onboarding-naming__input {
+  width: 100%;
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  border: 1.25px solid var(--color-ink-soft);
+  border-radius: 6px;
+  padding: 8px;
+  box-sizing: border-box;
+  outline: none;
+}
+.s-onboarding-naming__input:focus {
+  border-color: var(--color-grass);
+}
+.s-onboarding-naming__note {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  color: var(--color-ink-soft);
+  line-height: 1.5;
+}
+.s-onboarding-naming__btns {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-top: auto;
+}
+.s-onboarding-naming__btns > .c-button:first-child { width: 33%; }
+.s-onboarding-naming__btns > .c-button:last-child  { width: 67%; }
+
+/* === タイムライン === */
+.s-timeline {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.s-timeline__appbar-logo {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  color: var(--color-ink);
+  letter-spacing: 1px;
+}
+.s-timeline__segment {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--color-rule);
+  background: var(--color-paper);
+}
+.s-timeline__stream {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--color-paper2);
+}
+
+/* === コンポーズ === */
+.s-compose {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  height: 100%;
+  box-sizing: border-box;
+}
+.s-compose__author {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.s-compose__author__name {
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  color: var(--color-ink);
+}
+.s-compose__author__species {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  color: var(--color-ink-soft);
+}
+.s-compose__author__visibility {
+  margin-left: auto;
+}
+.s-compose__textarea {
+  width: 100%;
+  min-height: 100px;
+  border: 1.25px solid var(--color-ink-soft);
+  border-radius: 6px;
+  padding: 8px;
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  resize: none;
+  box-sizing: border-box;
+  outline: none;
+  line-height: 1.5;
+}
+.s-compose__textarea:focus { border-color: var(--color-grass); }
+.s-compose__photos {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.s-compose__photo-ph {
+  width: 60px;
+  height: 60px;
+  border: 1px dashed var(--color-ink-soft);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: var(--color-ink-soft);
+  background: var(--color-paper);
+  cursor: pointer;
+}
+.s-compose__tags {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.s-compose__tag-add {
+  border: 1px dashed var(--color-ink-soft);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-family: var(--font-jp);
+  font-size: 10px;
+  color: var(--color-ink-soft);
+  background: transparent;
+  cursor: pointer;
+}
+.s-compose__moods {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.s-compose__mood {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  border: 1px solid var(--color-ink-soft);
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.s-compose__mood.is-active {
+  background: var(--color-grass);
+  color: #fff;
+  border-color: var(--color-grass);
+}
+.s-compose__counter {
+  align-self: flex-end;
+  font-family: var(--font-jp);
+  font-size: 10px;
+  color: var(--color-ink-soft);
+}
+.s-compose__counter.is-warn { color: var(--color-coral); }
+.s-compose__post-btn {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  letter-spacing: 1px;
+  padding: 6px 10px;
+}
+
+/* === 投稿詳細 === */
+.s-detail {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-paper);
+}
+.s-detail__scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.s-detail__post {
+  padding: 14px;
+}
+.s-detail__follow-btn {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.s-detail__reactions {
+  border-top: 1.5px solid var(--color-ink-soft);
+  border-bottom: 1.5px solid var(--color-ink-soft);
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  font-family: var(--font-jp);
+  font-size: 11px;
+  color: var(--color-ink-soft);
+}
+.s-detail__reactions > * { cursor: pointer; }
+.s-detail__comments-head {
+  font-family: var(--font-jp);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--color-ink);
+  margin: 8px 0;
+}
+.s-detail__comment {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid var(--color-rule);
+}
+.s-detail__comment__main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.s-detail__comment__name {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--color-ink);
+}
+.s-detail__comment__body {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--color-ink);
+  line-height: 1.5;
+}
+.s-detail__comment__meta {
+  font-family: var(--font-jp);
+  font-size: 9px;
+  color: var(--color-ink-faint);
+}
+.s-detail__compose {
+  position: sticky;
+  bottom: 0;
+  background: var(--color-paper2);
+  border-top: 1px solid var(--color-rule);
+  padding: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.s-detail__compose__input {
+  flex: 1 1 auto;
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  border: 1.25px solid var(--color-ink-soft);
+  border-radius: 999px;
+  padding: 6px 12px;
+  outline: none;
+}
+.s-detail__compose__input:focus { border-color: var(--color-grass); }
+.s-detail__compose__send {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  color: var(--color-grass);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
+/* === プロフィール === */
+.s-profile {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--color-paper);
+}
+.s-profile__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px;
+  text-align: center;
+}
+.s-profile__name {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  color: var(--color-ink);
+  letter-spacing: 0.5px;
+}
+.s-profile__username {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  color: var(--color-ink-soft);
+}
+.s-profile__badges {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.s-profile__lv {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-sun);
+  color: #fff;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.s-profile__bio {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--color-ink);
+  line-height: 1.5;
+  padding: 0 16px;
+  text-align: center;
+}
+.s-profile__stats {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 12px 8px;
+  border-top: 1px solid var(--color-rule);
+  border-bottom: 1px solid var(--color-rule);
+  margin-top: 8px;
+}
+.s-profile__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.s-profile__stat__num {
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  color: var(--color-ink);
+}
+.s-profile__stat__label {
+  font-family: var(--font-jp);
+  font-size: 9px;
+  color: var(--color-ink-soft);
+}
+.s-profile__btns {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  padding: 8px 12px;
+}
+.s-profile__btns > .c-button { flex: 1 1 0; }
+.s-profile__segment {
+  padding: 0 12px;
+  margin-top: 8px;
+}
+.s-profile__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4px;
+  padding: 12px;
+}
+.s-profile__thumb {
+  aspect-ratio: 1 / 1;
+  background: var(--color-grass-soft);
+  font-family: var(--font-hand);
+  font-size: 11px;
+  color: var(--color-ink);
+  padding: 6px;
+  overflow: hidden;
+  border-radius: 4px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+.s-profile__empty {
+  text-align: center;
+  color: var(--color-ink-soft);
+  padding: 24px;
+  font-family: var(--font-hand);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* === 図鑑 === */
+.s-zukan {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-paper);
+}
+.s-zukan__scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+.s-zukan__count {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--color-ink);
+  letter-spacing: 0.5px;
+}
+.s-zukan__progress {
+  width: 100%;
+  height: 8px;
+  background: var(--color-rule);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+.s-zukan__progress__fill {
+  height: 100%;
+  background: var(--color-grass);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+.s-zukan__filter {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-rule);
+}
+.s-zukan__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 12px;
+}
+.s-zukan__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid var(--color-rule);
+  border-radius: 6px;
+  padding: 6px;
+  position: relative;
+  background: var(--color-paper2);
+  cursor: pointer;
+}
+.s-zukan__cell.is-unseen {
+  opacity: 0.55;
+  cursor: default;
+}
+.s-zukan__id {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: var(--color-ink-soft);
+}
+.s-zukan__sprite {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  display: block;
+}
+.s-zukan__sprite-silhouette {
+  filter: brightness(0);
+}
+.s-zukan__name {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  color: var(--color-ink);
+  text-align: center;
+  line-height: 1.2;
+}
+.s-zukan__cell.is-unseen .s-zukan__name {
+  color: var(--color-ink-faint);
+}
+.s-zukan__types {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  justify-content: center;
+}
+  </style>
+</head>
+<body data-fi="mid">
+  <div id="app"></div>
+  <script>
+const TYPE_JA_MAP = {
+  grass:    { ja: 'くさ',       cssKey: 'grass' },
+  fire:     { ja: 'ほのお',     cssKey: 'fire' },
+  water:    { ja: 'みず',       cssKey: 'water' },
+  electric: { ja: 'でんき',     cssKey: 'electric' },
+  bug:      { ja: 'むし',       cssKey: 'bug' },
+  normal:   { ja: 'ノーマル',   cssKey: 'normal' },
+  flying:   { ja: 'ひこう',     cssKey: 'flying' },
+  poison:   { ja: 'どく',       cssKey: 'poison' },
+  ground:   { ja: 'じめん',     cssKey: 'ground' },
+  rock:     { ja: 'いわ',       cssKey: 'rock' },
+  fighting: { ja: 'かくとう',   cssKey: 'fighting' },
+  psychic:  { ja: 'エスパー',   cssKey: 'psychic' },
+  ghost:    { ja: 'ゴースト',   cssKey: 'ghost' },
+  ice:      { ja: 'こおり',     cssKey: 'ice' },
+  dragon:   { ja: 'ドラゴン',   cssKey: 'dragon' },
+  dark:     { ja: 'あく',       cssKey: 'dark' },
+  steel:    { ja: 'はがね',     cssKey: 'steel' },
+  fairy:    { ja: 'フェアリー', cssKey: 'fairy' },
+};
+
+const NPC_LIST = [
+  { pokemonId: 1,   nickname: 'はっぱくん',  username: 'happa_kun',   vibe: 'leaf' },
+  { pokemonId: 4,   nickname: 'ヒノタロウ',  username: 'hino_taro',   vibe: 'flame' },
+  { pokemonId: 7,   nickname: 'アオプヨ',    username: 'ao_puyo',     vibe: 'water' },
+  { pokemonId: 25,  nickname: 'ピカ介',      username: 'pika_suke',   vibe: 'spark' },
+  { pokemonId: 39,  nickname: 'ぷりぷり',    username: 'puri_puri',   vibe: 'sing' },
+  { pokemonId: 54,  nickname: 'コダ',        username: 'koda',        vibe: 'headache' },
+  { pokemonId: 63,  nickname: 'ケシ',        username: 'keshi',       vibe: 'psychic' },
+  { pokemonId: 92,  nickname: 'おばけぱぱ',  username: 'obake_papa',  vibe: 'haunt' },
+  { pokemonId: 113, nickname: 'ハピ',        username: 'hapi',        vibe: 'cheer' },
+  { pokemonId: 133, nickname: 'エヴィ',      username: 'evi',         vibe: 'mood' },
+];
+
+const NPC_POSTS = [
+  { postId: 'npc-001', authorNpcId: 1,   body: 'くさむらで ひるね。スヤァ…',           tags: ['#くさむら', '#ひるね'], mood: 'ねむい',   hasPhoto: false, likes: 42, commentsCount: 3, retweets: 2, relativeTime: '12分前', createdAt: 1715600000000 },
+  { postId: 'npc-002', authorNpcId: 1,   body: 'は っぱ つかれた',                     tags: [],                       mood: 'ねむい',   hasPhoto: false, likes: 18, commentsCount: 2, retweets: 0, relativeTime: '38分前', createdAt: 1715598000000 },
+  { postId: 'npc-003', authorNpcId: 4,   body: 'しっぽが もえてる!!!',                 tags: ['#しっぽ'],              mood: 'ごきげん', hasPhoto: false, likes: 88, commentsCount: 4, retweets: 6, relativeTime: '1時間前', createdAt: 1715596000000 },
+  { postId: 'npc-004', authorNpcId: 4,   body: 'きょうの くさむらは とくに あつい。', tags: ['#くさむら'],            mood: 'おこ',     hasPhoto: false, likes: 33, commentsCount: 2, retweets: 1, relativeTime: '2時間前', createdAt: 1715594000000 },
+  { postId: 'npc-005', authorNpcId: 7,   body: 'みずたまり みつけた。きもちぃ',       tags: ['#みずたまり'],          mood: 'ごきげん', hasPhoto: true,  likes: 64, commentsCount: 3, retweets: 4, relativeTime: '2時間前', createdAt: 1715592000000 },
+  { postId: 'npc-006', authorNpcId: 7,   body: 'ザバァ',                               tags: [],                       mood: 'ごきげん', hasPhoto: false, likes: 27, commentsCount: 2, retweets: 1, relativeTime: '3時間前', createdAt: 1715590000000 },
+  { postId: 'npc-007', authorNpcId: 25,  body: 'ピリピリ きもち〜',                   tags: ['#ピリピリ'],            mood: 'ごきげん', hasPhoto: false, likes: 110, commentsCount: 4, retweets: 9, relativeTime: '3時間前', createdAt: 1715588000000 },
+  { postId: 'npc-008', authorNpcId: 25,  body: 'しっぽから ばちっ',                   tags: ['#しっぽ'],              mood: 'ごきげん', hasPhoto: false, likes: 76, commentsCount: 3, retweets: 5, relativeTime: '4時間前', createdAt: 1715586000000 },
+  { postId: 'npc-009', authorNpcId: 25,  body: 'きょうも げんき まんたん!',           tags: [],                       mood: 'ごきげん', hasPhoto: false, likes: 95, commentsCount: 2, retweets: 7, relativeTime: '5時間前', createdAt: 1715584000000 },
+  { postId: 'npc-010', authorNpcId: 39,  body: 'うとうと… うた うたって ねちゃう…', tags: ['#おひるね'],            mood: 'ねむい',   hasPhoto: false, likes: 51, commentsCount: 3, retweets: 3, relativeTime: '6時間前', createdAt: 1715582000000 },
+  { postId: 'npc-011', authorNpcId: 39,  body: 'マイク さがしてる',                   tags: [],                       mood: 'おこ',     hasPhoto: false, likes: 22, commentsCount: 2, retweets: 0, relativeTime: '7時間前', createdAt: 1715580000000 },
+  { postId: 'npc-012', authorNpcId: 54,  body: 'あたま いたい…',                       tags: [],                       mood: 'おこ',     hasPhoto: false, likes: 16, commentsCount: 2, retweets: 0, relativeTime: '8時間前', createdAt: 1715578000000 },
+  { postId: 'npc-013', authorNpcId: 54,  body: 'みずたまりに あたま つけたら なおる?', tags: ['#みずたまり'],        mood: 'おこ',     hasPhoto: false, likes: 29, commentsCount: 3, retweets: 1, relativeTime: '9時間前', createdAt: 1715576000000 },
+  { postId: 'npc-014', authorNpcId: 63,  body: 'みんな げんき?',                       tags: [],                       mood: 'ごきげん', hasPhoto: false, likes: 38, commentsCount: 3, retweets: 2, relativeTime: '10時間前', createdAt: 1715574000000 },
+  { postId: 'npc-015', authorNpcId: 63,  body: 'スプーン まげる れんしゅう ちゅう',   tags: [],                       mood: 'ごきげん', hasPhoto: false, likes: 47, commentsCount: 2, retweets: 3, relativeTime: '11時間前', createdAt: 1715572000000 },
+  { postId: 'npc-016', authorNpcId: 92,  body: 'くらい中の あかり、もっとこっち',     tags: [],                       mood: 'おこ',     hasPhoto: false, likes: 31, commentsCount: 3, retweets: 2, relativeTime: '12時間前', createdAt: 1715570000000 },
+  { postId: 'npc-017', authorNpcId: 92,  body: 'ふわふわ うかんで さんぽ ちゅう',     tags: [],                       mood: 'ごきげん', hasPhoto: false, likes: 24, commentsCount: 2, retweets: 1, relativeTime: 'きのう',  createdAt: 1715568000000 },
+  { postId: 'npc-018', authorNpcId: 113, body: 'きょうも おうえん!',                   tags: [],                       mood: 'ごきげん', hasPhoto: false, likes: 99, commentsCount: 4, retweets: 8, relativeTime: 'きのう',  createdAt: 1715566000000 },
+  { postId: 'npc-019', authorNpcId: 113, body: 'たまご わけてあげる〜',               tags: [],                       mood: 'ごきげん', hasPhoto: true,  likes: 72, commentsCount: 3, retweets: 5, relativeTime: 'きのう',  createdAt: 1715564000000 },
+  { postId: 'npc-020', authorNpcId: 133, body: 'きょうは みず きぶん',                 tags: [],                       mood: 'ごきげん', hasPhoto: false, likes: 58, commentsCount: 3, retweets: 4, relativeTime: 'きのう',  createdAt: 1715562000000 },
+  { postId: 'npc-021', authorNpcId: 133, body: 'あした なにに なろうかな〜',           tags: [],                       mood: 'ごきげん', hasPhoto: false, likes: 81, commentsCount: 4, retweets: 6, relativeTime: 'きのう',  createdAt: 1715560000000 },
+];
+
+const NPC_COMMENTS = {
+  'npc-001': [
+    { authorNpcId: 25, body: 'いいね〜' },
+    { authorNpcId: 7,  body: 'うらやま' },
+    { authorNpcId: 39, body: 'わたしも ねる' },
+  ],
+  'npc-002': [
+    { authorNpcId: 113, body: 'おつかれさま!' },
+    { authorNpcId: 133, body: 'やすんで〜' },
+  ],
+  'npc-003': [
+    { authorNpcId: 7,  body: 'みず かける?' },
+    { authorNpcId: 1,  body: 'あつそう…' },
+    { authorNpcId: 25, body: 'バチバチ!' },
+    { authorNpcId: 92, body: 'ヒュー!' },
+  ],
+  'npc-004': [
+    { authorNpcId: 1,   body: 'やめて〜' },
+    { authorNpcId: 113, body: 'おちついて〜' },
+  ],
+  'npc-005': [
+    { authorNpcId: 54,  body: 'いっしょに はいる' },
+    { authorNpcId: 25,  body: 'かんでん ちゅうい!' },
+    { authorNpcId: 133, body: 'いいなぁ' },
+  ],
+  'npc-006': [
+    { authorNpcId: 1,  body: 'びっくりした' },
+    { authorNpcId: 39, body: 'ぱしゃっ' },
+  ],
+  'npc-007': [
+    { authorNpcId: 4,   body: 'しっぽ あつい!' },
+    { authorNpcId: 113, body: 'げんき もらった' },
+    { authorNpcId: 133, body: 'まねしたい' },
+    { authorNpcId: 92,  body: 'ぴかーっ!' },
+  ],
+  'npc-008': [
+    { authorNpcId: 54, body: 'いた…!' },
+    { authorNpcId: 7,  body: 'みず ぬれてないよね?' },
+    { authorNpcId: 1,  body: 'きをつけて〜' },
+  ],
+  'npc-009': [
+    { authorNpcId: 39,  body: 'うらやましい' },
+    { authorNpcId: 113, body: 'えらい!' },
+  ],
+  'npc-010': [
+    { authorNpcId: 1,   body: 'いっしょに ねよ' },
+    { authorNpcId: 113, body: 'ふとん かけとくね' },
+    { authorNpcId: 54,  body: 'うた きこえる…' },
+  ],
+  'npc-011': [
+    { authorNpcId: 25, body: 'みつけたら おしえる' },
+    { authorNpcId: 92, body: 'もってない よ?' },
+  ],
+  'npc-012': [
+    { authorNpcId: 113, body: 'だいじょうぶ?' },
+    { authorNpcId: 63,  body: 'ねむれば なおる' },
+  ],
+  'npc-013': [
+    { authorNpcId: 7,   body: 'いっしょに つけよ' },
+    { authorNpcId: 1,   body: 'なおると いいね' },
+    { authorNpcId: 113, body: 'むりしないで〜' },
+  ],
+  'npc-014': [
+    { authorNpcId: 1,   body: 'げんき!' },
+    { authorNpcId: 25,  body: 'ピリッと げんき!' },
+    { authorNpcId: 133, body: 'ぼちぼち〜' },
+  ],
+  'npc-015': [
+    { authorNpcId: 54, body: 'すごい…' },
+    { authorNpcId: 92, body: 'みたい!' },
+  ],
+  'npc-016': [
+    { authorNpcId: 25,  body: 'ピカッと てらす!' },
+    { authorNpcId: 113, body: 'ろうそく もってくね' },
+    { authorNpcId: 39,  body: 'こわい よぉ' },
+  ],
+  'npc-017': [
+    { authorNpcId: 4,  body: 'ふわふわ いいな' },
+    { authorNpcId: 1,  body: 'おさんぽ たのしそう' },
+  ],
+  'npc-018': [
+    { authorNpcId: 4,   body: 'ありがと!' },
+    { authorNpcId: 25,  body: 'げんき でた!' },
+    { authorNpcId: 1,   body: 'うれしい〜' },
+    { authorNpcId: 133, body: 'すき〜' },
+  ],
+  'npc-019': [
+    { authorNpcId: 39, body: 'たべる〜' },
+    { authorNpcId: 54, body: 'ありがたい…' },
+    { authorNpcId: 92, body: 'ひとつ ちょうだい' },
+  ],
+  'npc-020': [
+    { authorNpcId: 7,  body: 'なかま!' },
+    { authorNpcId: 1,  body: 'いいね〜' },
+    { authorNpcId: 25, body: 'みずは にがて…' },
+  ],
+  'npc-021': [
+    { authorNpcId: 113, body: 'たのしみ!' },
+    { authorNpcId: 39,  body: 'みてみたい' },
+    { authorNpcId: 4,   body: 'ほのおも いいよ' },
+    { authorNpcId: 63,  body: 'よそうしてみる' },
+  ],
+};
+'use strict';
+
+const storage = {
+  PARTNER_KEY: 'pokens:partner',
+  POSTS_KEY: 'pokens:posts',
+  SEEN_KEY: 'pokens:zukan_seen',
+  POKE_CACHE_PREFIX: 'pokens:poke_cache:',
+  getPartner() {
+    try {
+      const raw = localStorage.getItem(this.PARTNER_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  },
+  setPartner(obj) {
+    localStorage.setItem(this.PARTNER_KEY, JSON.stringify(obj));
+  },
+  getPosts() {
+    try {
+      const raw = localStorage.getItem(this.POSTS_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) {
+      return [];
+    }
+  },
+  addPost(post) {
+    const posts = this.getPosts();
+    posts.unshift(post);
+    localStorage.setItem(this.POSTS_KEY, JSON.stringify(posts));
+    return posts;
+  },
+  getSeen() {
+    try {
+      const raw = localStorage.getItem(this.SEEN_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return [];
+      return arr.map(n => Number(n)).filter(n => Number.isFinite(n));
+    } catch (e) {
+      return [];
+    }
+  },
+  addSeen(id) {
+    const num = Number(id);
+    if (!Number.isFinite(num)) return this.getSeen();
+    const seen = this.getSeen();
+    if (!seen.includes(num)) {
+      seen.push(num);
+      localStorage.setItem(this.SEEN_KEY, JSON.stringify(seen));
+    }
+    return seen;
+  },
+  addSeenMany(ids) {
+    if (!Array.isArray(ids)) return this.getSeen();
+    const seen = this.getSeen();
+    const set = new Set(seen);
+    let changed = false;
+    for (const id of ids) {
+      const num = Number(id);
+      if (!Number.isFinite(num)) continue;
+      if (!set.has(num)) {
+        set.add(num);
+        seen.push(num);
+        changed = true;
+      }
+    }
+    if (changed) {
+      localStorage.setItem(this.SEEN_KEY, JSON.stringify(seen));
+    }
+    return seen;
+  },
+  getPokeCache(id) {
+    try {
+      const raw = localStorage.getItem(this.POKE_CACHE_PREFIX + id);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  },
+  setPokeCache(id, obj) {
+    localStorage.setItem(this.POKE_CACHE_PREFIX + id, JSON.stringify(obj));
+  },
+};
+
+const pokeApi = {
+  BASE: 'https://pokeapi.co/api/v2',
+  inflight: new Map(),
+  async fetchPokemon(id) {
+    const numId = Number(id);
+    if (!Number.isFinite(numId)) {
+      throw new Error('pokeApi.fetchPokemon: invalid id ' + id);
+    }
+    const cached = storage.getPokeCache(numId);
+    if (cached) return cached;
+    if (this.inflight.has(numId)) {
+      return await this.inflight.get(numId);
+    }
+    const promise = (async () => {
+      const [pokeRes, speciesRes] = await Promise.all([
+        fetch(this.BASE + '/pokemon/' + numId),
+        fetch(this.BASE + '/pokemon-species/' + numId),
+      ]);
+      if (!pokeRes.ok) {
+        throw new Error('pokeApi: /pokemon/' + numId + ' failed (' + pokeRes.status + ')');
+      }
+      if (!speciesRes.ok) {
+        throw new Error('pokeApi: /pokemon-species/' + numId + ' failed (' + speciesRes.status + ')');
+      }
+      const pokemon = await pokeRes.json();
+      const species = await speciesRes.json();
+
+      let jaName = null;
+      const names = Array.isArray(species.names) ? species.names : [];
+      const jaHrkt = names.find(n => n && n.language && n.language.name === 'ja-Hrkt');
+      if (jaHrkt && jaHrkt.name) {
+        jaName = jaHrkt.name;
+      } else {
+        const ja = names.find(n => n && n.language && n.language.name === 'ja');
+        if (ja && ja.name) {
+          jaName = ja.name;
+        } else {
+          jaName = pokemon.name || ('#' + numId);
+        }
+      }
+
+      const types = Array.isArray(pokemon.types)
+        ? pokemon.types
+            .map(t => (t && t.type && t.type.name) ? t.type.name : null)
+            .filter(Boolean)
+            .map(en => {
+              const entry = (typeof TYPE_JA_MAP !== 'undefined' && TYPE_JA_MAP[en]) ? TYPE_JA_MAP[en] : null;
+              return entry && entry.ja ? entry.ja : en;
+            })
+        : [];
+
+      const typeKeys = Array.isArray(pokemon.types)
+        ? pokemon.types
+            .map(t => (t && t.type && t.type.name) ? t.type.name : null)
+            .filter(Boolean)
+        : [];
+
+      const spriteUrl = (pokemon.sprites && pokemon.sprites.front_default) ? pokemon.sprites.front_default : null;
+
+      const normalized = {
+        id: numId,
+        jaName,
+        types,
+        typeKeys,
+        spriteUrl,
+      };
+      storage.setPokeCache(numId, normalized);
+      return normalized;
+    })();
+    this.inflight.set(numId, promise);
+    try {
+      const result = await promise;
+      return result;
+    } finally {
+      this.inflight.delete(numId);
+    }
+  },
+  async pickFiveRandom() {
+    const ids = new Set();
+    while (ids.size < 5) {
+      ids.add(1 + Math.floor(Math.random() * 151));
+    }
+    const idList = Array.from(ids);
+    const settled = await Promise.allSettled(idList.map(id => this.fetchPokemon(id)));
+    const results = [];
+    for (const s of settled) {
+      if (s.status === 'fulfilled' && s.value) {
+        results.push(s.value);
+      }
+    }
+    if (results.length < 4) {
+      throw new Error('pokeApi.pickFiveRandom: only ' + results.length + ' pokemon could be fetched');
+    }
+    return results;
+  },
+};
+
+const app = {
+  root: null,
+  state: {},
+};
+
+function el(tag, attrs = {}, children = []) {
+  const node = document.createElement(tag);
+  if (attrs && typeof attrs === 'object') {
+    for (const key of Object.keys(attrs)) {
+      const val = attrs[key];
+      if (val == null) continue;
+      if (key === 'class') {
+        node.className = val;
+      } else if (key === 'text') {
+        node.textContent = String(val);
+      } else if (key === 'html') {
+        node.innerHTML = String(val);
+      } else if (key === 'style' && typeof val === 'object') {
+        for (const sk of Object.keys(val)) {
+          node.style[sk] = val[sk];
+        }
+      } else if (key === 'on' && typeof val === 'object') {
+        for (const evName of Object.keys(val)) {
+          if (typeof val[evName] === 'function') {
+            node.addEventListener(evName, val[evName]);
+          }
+        }
+      } else if (key === 'dataset' && typeof val === 'object') {
+        for (const dk of Object.keys(val)) {
+          node.dataset[dk] = val[dk];
+        }
+      } else {
+        node.setAttribute(key, val);
+      }
+    }
+  }
+  const appendChild = (c) => {
+    if (c == null || c === false) return;
+    if (typeof c === 'string' || typeof c === 'number') {
+      node.appendChild(document.createTextNode(String(c)));
+    } else if (c instanceof Node) {
+      node.appendChild(c);
+    } else if (Array.isArray(c)) {
+      c.forEach(appendChild);
+    }
+  };
+  if (Array.isArray(children)) {
+    children.forEach(appendChild);
+  } else {
+    appendChild(children);
+  }
+  return node;
+}
+
+function renderChromeBar(url) {
+  const text = 'pokens.app ' + (url || '/');
+  return el('div', { class: 'c-chromebar', text });
+}
+
+function renderAppBar({ left, center, right } = {}) {
+  const slot = (val, cls) => {
+    const wrapper = el('div', { class: cls });
+    if (val == null) return wrapper;
+    if (val instanceof Node) {
+      wrapper.appendChild(val);
+    } else {
+      wrapper.textContent = String(val);
+    }
+    return wrapper;
+  };
+  return el('div', { class: 'c-appbar' }, [
+    slot(left, 'c-appbar__left'),
+    slot(center, 'c-appbar__center'),
+    slot(right, 'c-appbar__right'),
+  ]);
+}
+
+function renderTabBar(activeIndex) {
+  const tabs = [
+    { label: '[HOME]', index: 0, action: () => { location.hash = '#/timeline'; } },
+    { label: '[SRCH]', index: 1, action: null },
+    { label: '[ + ]', index: 2, action: () => { location.hash = '#/post/new'; } },
+    { label: '[ DM ]', index: 3, action: null },
+    { label: '[ ME ]', index: 4, action: () => { location.hash = '#/profile'; } },
+  ];
+  const bar = el('div', { class: 'c-tabbar' });
+  tabs.forEach(t => {
+    const cls = 'c-tabbar__item' + (t.index === activeIndex ? ' is-active' : '');
+    const item = el('button', {
+      class: cls,
+      type: 'button',
+      text: t.label,
+      on: {
+        click: (ev) => {
+          if (typeof t.action === 'function') {
+            t.action();
+          } else {
+            ev.preventDefault();
+          }
+        },
+      },
+    });
+    bar.appendChild(item);
+  });
+  return bar;
+}
+
+function renderPill(jaTypeName, englishTypeKey) {
+  const key = englishTypeKey || 'normal';
+  return el('span', {
+    class: 'c-pill c-pill--' + key,
+    text: jaTypeName || '',
+  });
+}
+
+function renderAvatar(spriteUrl, size) {
+  const sz = size || 'md';
+  const wrapper = el('div', { class: 'c-avatar c-avatar--' + sz });
+  if (spriteUrl) {
+    wrapper.appendChild(el('img', { src: spriteUrl, alt: '' }));
+  } else {
+    wrapper.appendChild(el('span', { class: 'c-avatar__placeholder', text: 'AVA' }));
+  }
+  return wrapper;
+}
+
+function renderButton(label, variant, onClick) {
+  const v = variant || 'primary';
+  const text = v === 'primary' ? '[ ' + label + ' ]' : label;
+  const btn = el('button', {
+    class: 'c-button c-button--' + v,
+    type: 'button',
+    text,
+  });
+  if (typeof onClick === 'function') {
+    btn.addEventListener('click', onClick);
+  }
+  return btn;
+}
+
+function clearMain() {
+  if (!app.root) {
+    app.root = document.getElementById('app');
+  }
+  app.root.innerHTML = '';
+  const frame = el('div', { class: 'c-frame' });
+  const chromebarSlot = el('div');
+  const appbarSlot = el('div');
+  const main = el('div', { class: 'c-frame__main' });
+  const tabbarSlot = el('div');
+  frame.appendChild(chromebarSlot);
+  frame.appendChild(appbarSlot);
+  frame.appendChild(main);
+  frame.appendChild(tabbarSlot);
+  app.root.appendChild(frame);
+  return { frame, chromebar: chromebarSlot, appbar: appbarSlot, main, tabbar: tabbarSlot };
+}
+
+function mountScreen({ url, appBar, body, tabActiveIndex } = {}) {
+  const slots = clearMain();
+  slots.chromebar.replaceWith(renderChromeBar(url || '/'));
+  if (appBar instanceof Node) {
+    slots.appbar.replaceWith(appBar);
+  } else if (appBar && typeof appBar === 'object') {
+    slots.appbar.replaceWith(renderAppBar(appBar));
+  } else {
+    slots.appbar.style.display = 'none';
+  }
+  if (body != null) {
+    if (body instanceof Node) {
+      slots.main.appendChild(body);
+    } else if (Array.isArray(body)) {
+      body.forEach(b => { if (b instanceof Node) slots.main.appendChild(b); });
+    } else if (typeof body === 'string') {
+      slots.main.appendChild(document.createTextNode(body));
+    }
+  }
+  if (tabActiveIndex == null) {
+    slots.tabbar.style.display = 'none';
+  } else {
+    slots.tabbar.replaceWith(renderTabBar(tabActiveIndex));
+  }
+  return slots;
+}
+
+function router() {
+  const hash = location.hash || '';
+  if (hash === '' || hash === '#' || hash === '#/') {
+    if (typeof renderTimeline === 'function') renderTimeline();
+    return;
+  }
+  if (hash === '#/onboarding') {
+    if (typeof renderOnboarding === 'function') renderOnboarding();
+    return;
+  }
+  if (hash === '#/timeline') {
+    if (typeof renderTimeline === 'function') renderTimeline();
+    return;
+  }
+  if (hash === '#/post/new') {
+    if (typeof renderPostCompose === 'function') renderPostCompose();
+    return;
+  }
+  if (hash.indexOf('#/post/') === 0) {
+    const id = hash.substring('#/post/'.length);
+    if (id && id !== 'new') {
+      if (typeof renderPostDetail === 'function') renderPostDetail(id);
+      return;
+    }
+  }
+  if (hash === '#/profile') {
+    if (typeof renderProfile === 'function') renderProfile();
+    return;
+  }
+  if (hash === '#/zukan') {
+    if (typeof renderZukan === 'function') renderZukan();
+    return;
+  }
+  location.hash = '#/timeline';
+}
+
+function init() {
+  app.root = document.getElementById('app');
+  window.addEventListener('hashchange', router);
+  const partner = storage.getPartner();
+  if (!partner) {
+    if (location.hash !== '#/onboarding') {
+      location.hash = '#/onboarding';
+    } else {
+      router();
+    }
+    return;
+  }
+  if (!location.hash || location.hash === '#' || location.hash === '#/' || location.hash === '#/onboarding') {
+    location.hash = '#/timeline';
+    return;
+  }
+  router();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+let onboardingState = { step: 'title', candidates: [], selected: null, loading: false, error: null, shakeCount: 0 };
+
+function goOnboardingStep(name) {
+  onboardingState.step = name;
+  renderOnboarding();
+}
+
+function renderOnboarding() {
+  if (!onboardingState.step) onboardingState.step = 'title';
+  const step = onboardingState.step;
+  if (step === 'title') return renderOnboardingTitle();
+  if (step === 'grass') return renderOnboardingGrass();
+  if (step === 'encounter') return renderOnboardingEncounter();
+  if (step === 'naming') return renderOnboardingNaming();
+  return renderOnboardingTitle();
+}
+
+function renderOnboardingTitle() {
+  const logo = el('div', { class: 's-onboarding-title__logo', text: 'ぽけ\nNS' });
+  const sub = el('div', { class: 's-onboarding-title__sub', text: '〜なりきり SNS〜' });
+  const hero = el('div', { class: 's-onboarding-title__hero', text: 'HERO ART' });
+  const startBtn = renderButton('START', 'primary', () => {
+    goOnboardingStep('grass');
+  });
+  startBtn.classList.add('c-button--block');
+  const buttons = el('div', { class: 's-onboarding-title__buttons' }, [startBtn]);
+  const link = el('div', { class: 's-onboarding-title__link', text: 'ログイン / 利用規約' });
+  const body = el('div', { class: 's-onboarding-title' }, [logo, sub, hero, buttons, link]);
+  mountScreen({
+    url: '/onboarding',
+    appBar: null,
+    body,
+    tabActiveIndex: null,
+  });
+}
+
+function renderOnboardingGrass() {
+  const skipRight = el('span', {
+    text: 'SKIP>',
+    style: { cursor: 'pointer' },
+    on: { click: () => goOnboardingStep('encounter') },
+  });
+  const appBar = {
+    left: '[ENCOUNTER 1/3]',
+    center: null,
+    right: skipRight,
+  };
+
+  const copy = el('div', { class: 's-onboarding-grass__copy', html: 'くさむらが <span class="is-emph">ガサガサ</span> している…' });
+
+  const symbol = el('div', { class: 's-onboarding-grass__symbol', text: '!?' });
+  const sfx1 = el('div', { class: 's-onboarding-grass__sfx s-onboarding-grass__sfx--1', text: 'ガサッ' });
+  const sfx2 = el('div', { class: 's-onboarding-grass__sfx s-onboarding-grass__sfx--2', text: 'ガサガサ' });
+  const sfx3 = el('div', { class: 's-onboarding-grass__sfx s-onboarding-grass__sfx--3', text: 'ザワッ' });
+  const sfx4 = el('div', { class: 's-onboarding-grass__sfx s-onboarding-grass__sfx--4', text: 'ガサ' });
+
+  const tile = el('div', {
+    class: 's-onboarding-grass__tile c-grasstile',
+    on: {
+      click: () => {
+        tile.classList.add('is-shaking');
+        onboardingState.shakeCount = (onboardingState.shakeCount || 0) + 1;
+        if (onboardingState.shakeCount > 3) {
+          setTimeout(() => goOnboardingStep('encounter'), 350);
+        }
+      },
+      animationend: () => {
+        tile.classList.remove('is-shaking');
+      },
+    },
+  }, [symbol, sfx1, sfx2, sfx3, sfx4]);
+
+  const hint = el('div', { class: 's-onboarding-grass__hint', text: '↓ 草むらをタップ' });
+  const goBtn = renderButton('くさむらを ガサる', 'primary', () => goOnboardingStep('encounter'));
+  goBtn.classList.add('c-button--block');
+  const buttons = el('div', { class: 's-onboarding-grass__buttons' }, [goBtn]);
+
+  const body = el('div', { class: 's-onboarding-grass' }, [copy, tile, hint, buttons]);
+
+  mountScreen({
+    url: '/onboarding/grass',
+    appBar,
+    body,
+    tabActiveIndex: null,
+  });
+}
+
+function renderOnboardingEncounter() {
+  const skipRight = el('span', {
+    text: 'SKIP>',
+    style: { cursor: 'pointer' },
+    on: { click: () => { /* no-op */ } },
+  });
+  const appBar = {
+    left: '[ENCOUNTER 2/3]',
+    center: null,
+    right: skipRight,
+  };
+
+  const head = el('div', { class: 's-onboarding-encounter__head', html: '<span class="is-emph">5ひき</span> あらわれた!' });
+
+  const body = el('div', { class: 's-onboarding-encounter' }, [head]);
+
+  if (onboardingState.loading) {
+    body.appendChild(el('div', { class: 's-onboarding-encounter__hint', text: 'ガサガサ…' }));
+    mountScreen({ url: '/onboarding/encounter', appBar, body, tabActiveIndex: null });
+    return;
+  }
+
+  if (onboardingState.error) {
+    body.appendChild(el('div', { class: 's-onboarding-encounter__hint', text: 'ポケモンが あらわれなかった…' }));
+    const retryBtn = renderButton('もういちど くさをガサる', 'primary', () => {
+      onboardingState.error = null;
+      onboardingState.candidates = [];
+      onboardingState.selected = null;
+      loadEncounterCandidates();
+    });
+    retryBtn.classList.add('c-button--block');
+    body.appendChild(el('div', { class: 's-onboarding-encounter__buttons' }, [retryBtn]));
+    mountScreen({ url: '/onboarding/encounter', appBar, body, tabActiveIndex: null });
+    return;
+  }
+
+  if (!onboardingState.candidates || onboardingState.candidates.length === 0) {
+    body.appendChild(el('div', { class: 's-onboarding-encounter__hint', text: 'ガサガサ…' }));
+    mountScreen({ url: '/onboarding/encounter', appBar, body, tabActiveIndex: null });
+    loadEncounterCandidates();
+    return;
+  }
+
+  const cands = onboardingState.candidates;
+  const top = cands.slice(0, 4);
+  const bottom = cands.slice(4, 5);
+
+  const buildCard = (c, isWide) => {
+    const sprite = el('img', { class: 's-onboarding-encounter__card__sprite', src: c.spriteUrl || '', alt: c.jaName });
+    const name = el('div', { class: 's-onboarding-encounter__card__name', text: c.jaName });
+    const types = el('div', { class: 's-onboarding-encounter__card__types' });
+    (c.typeKeys || []).forEach((tk, i) => {
+      const ja = (c.types && c.types[i]) || (TYPE_JA_MAP[tk] && TYPE_JA_MAP[tk].ja) || tk;
+      types.appendChild(renderPill(ja, tk));
+    });
+    const cardClass = 's-onboarding-encounter__card' + (isWide ? ' s-onboarding-encounter__card--wide' : '') + (onboardingState.selected && onboardingState.selected.id === c.id ? ' is-selected' : '');
+    const card = el('div', {
+      class: cardClass,
+      on: {
+        click: () => {
+          onboardingState.selected = c;
+          renderOnboarding();
+        },
+      },
+    }, [sprite, name, types]);
+    return card;
+  };
+
+  const gridTop = el('div', { class: 's-onboarding-encounter__grid-top' }, top.map((c) => buildCard(c, false)));
+  const gridChildren = [gridTop];
+  if (bottom.length > 0) {
+    const gridBottom = el('div', { class: 's-onboarding-encounter__grid-bottom' }, bottom.map((c) => buildCard(c, true)));
+    gridChildren.push(gridBottom);
+  }
+  const grid = el('div', { class: 's-onboarding-encounter__grid' }, gridChildren);
+  body.appendChild(grid);
+
+  body.appendChild(el('div', { class: 's-onboarding-encounter__hint', text: '1ぴき えらんでね' }));
+
+  const chooseBtn = renderButton('えらぶ', 'primary', () => {
+    if (!onboardingState.selected) return;
+    goOnboardingStep('naming');
+  });
+  chooseBtn.classList.add('c-button--block');
+  if (!onboardingState.selected) {
+    chooseBtn.classList.add('is-disabled');
+  }
+  body.appendChild(el('div', { class: 's-onboarding-encounter__buttons' }, [chooseBtn]));
+
+  mountScreen({ url: '/onboarding/encounter', appBar, body, tabActiveIndex: null });
+}
+
+function loadEncounterCandidates() {
+  onboardingState.loading = true;
+  onboardingState.error = null;
+  renderOnboarding();
+  pokeApi.pickFiveRandom().then((list) => {
+    onboardingState.loading = false;
+    onboardingState.candidates = list || [];
+    if (onboardingState.candidates.length > 0) {
+      const ids = onboardingState.candidates.map((c) => c.id);
+      try { storage.addSeenMany(ids); } catch (e) {}
+    }
+    renderOnboarding();
+  }).catch(() => {
+    onboardingState.loading = false;
+    onboardingState.error = 'fetch_failed';
+    onboardingState.candidates = [];
+    renderOnboarding();
+  });
+}
+
+function renderOnboardingNaming() {
+  const sel = onboardingState.selected;
+  if (!sel) {
+    goOnboardingStep('encounter');
+    return;
+  }
+
+  const backLeft = el('span', {
+    text: 'もどる<',
+    style: { cursor: 'pointer' },
+    on: { click: () => goOnboardingStep('encounter') },
+  });
+  const appBar = {
+    left: backLeft,
+    center: null,
+    right: '[ENCOUNTER 3/3]',
+  };
+
+  const head = el('div', { class: 's-onboarding-naming__head', text: 'きみの あいぼう、けってい!' });
+
+  const sprite = el('img', {
+    class: 's-onboarding-naming__sprite',
+    src: sel.spriteUrl || '',
+    alt: sel.jaName,
+  });
+  const species = el('div', { class: 's-onboarding-naming__species', text: sel.jaName });
+  const types = el('div', { class: 's-onboarding-naming__types' });
+  (sel.typeKeys || []).forEach((tk, i) => {
+    const ja = (sel.types && sel.types[i]) || (TYPE_JA_MAP[tk] && TYPE_JA_MAP[tk].ja) || tk;
+    types.appendChild(renderPill(ja, tk));
+  });
+  const card = el('div', { class: 's-onboarding-naming__card' }, [sprite, species, types]);
+
+  const label = el('div', { class: 's-onboarding-naming__label', text: 'なまえを つけよう' });
+  const input = el('input', {
+    class: 's-onboarding-naming__input',
+    type: 'text',
+    placeholder: 'ぽち_',
+    value: onboardingState.name || sel.jaName,
+  });
+  input.addEventListener('input', () => {
+    onboardingState.name = input.value;
+  });
+  const note = el('div', { class: 's-onboarding-naming__note', text: '※あとから変更可' });
+  const inputWrap = el('div', { class: 's-onboarding-naming__input-wrap' }, [label, input, note]);
+
+  const otherBtn = renderButton('べつのも', 'secondary', () => goOnboardingStep('encounter'));
+  const startBtn = renderButton('はじめる', 'primary', () => {
+    const raw = (input.value || '').trim();
+    const nickname = raw || sel.jaName;
+    let username;
+    const ascii = nickname.toLowerCase().replace(/\s+/g, '_');
+    if (/^[\x00-\x7F]+$/.test(ascii)) {
+      username = ascii;
+    } else {
+      username = nickname + '_';
+    }
+    const partner = {
+      pokemonId: sel.id,
+      nickname,
+      username,
+      species: sel.jaName,
+      types: sel.types,
+      typeKeys: sel.typeKeys,
+      spriteUrl: sel.spriteUrl,
+      confirmedAt: Date.now(),
+    };
+    storage.setPartner(partner);
+    storage.addSeen(sel.id);
+    location.hash = '#/timeline';
+  });
+  const btns = el('div', { class: 's-onboarding-naming__btns' }, [otherBtn, startBtn]);
+
+  const noteInline = el('div', { class: 'c-note c-note--inline', text: '確定後はランダム再抽選 不可' });
+
+  const body = el('div', { class: 's-onboarding-naming' }, [head, card, inputWrap, btns, noteInline]);
+
+  mountScreen({
+    url: '/onboarding/naming',
+    appBar,
+    body,
+    tabActiveIndex: null,
+  });
+}
+function renderTimeline() {
+  try { storage.addSeenMany(NPC_LIST.map(function(n){ return n.pokemonId; })); } catch (e) { console.warn('addSeenMany failed', e); }
+
+  var partner = null;
+  try { partner = storage.getPartner(); } catch (e) { partner = null; }
+
+  var myPosts = [];
+  try { myPosts = storage.getPosts() || []; } catch (e) { myPosts = []; }
+
+  var npcPosts = (typeof NPC_POSTS !== 'undefined' && NPC_POSTS) ? NPC_POSTS.slice() : [];
+
+  var merged = [];
+  for (var i = 0; i < npcPosts.length; i++) {
+    merged.push({ kind: 'npc', post: npcPosts[i], createdAt: npcPosts[i].createdAt || 0 });
+  }
+  for (var j = 0; j < myPosts.length; j++) {
+    merged.push({ kind: 'self', post: myPosts[j], createdAt: myPosts[j].createdAt || 0 });
+  }
+  merged.sort(function(a, b){ return (b.createdAt || 0) - (a.createdAt || 0); });
+
+  var appBarLeft = el('span', { class: 's-timeline__appbar-logo' }, ['[P] ぽけNS']);
+  var appBarRight = el('span', { style: 'cursor:pointer;' }, ['[FILT]']);
+  appBarRight.addEventListener('click', function(){});
+
+  var wrap = el('div', { class: 's-timeline' });
+
+  var segmentWrap = el('div', { class: 's-timeline__segment' });
+  var segment = el('div', { class: 'c-segment' });
+  var segLabels = ['フォロー中', 'おすすめ', '同じタイプ'];
+  for (var s = 0; s < segLabels.length; s++) {
+    var item = el('div', {
+      class: 'c-segment__item' + (s === 1 ? ' is-active' : ''),
+      style: 'cursor:pointer;'
+    }, [segLabels[s]]);
+    item.addEventListener('click', function(){});
+    segment.appendChild(item);
+  }
+  segmentWrap.appendChild(segment);
+  wrap.appendChild(segmentWrap);
+
+  var stream = el('div', { class: 's-timeline__stream' });
+
+  for (var k = 0; k < merged.length; k++) {
+    var entry = merged[k];
+    var card;
+    if (entry.kind === 'npc') {
+      card = buildNpcPostCard(entry.post);
+    } else {
+      card = buildSelfPostCard(entry.post, partner);
+    }
+    if (card) stream.appendChild(card);
+  }
+
+  wrap.appendChild(stream);
+
+  mountScreen({
+    url: '/home',
+    appBar: { left: appBarLeft, center: null, right: appBarRight },
+    body: wrap,
+    tabActiveIndex: 0
+  });
+}
+
+function buildNpcPostCard(post) {
+  var npc = NPC_LIST.find(function(n){ return n.pokemonId === post.authorNpcId; });
+  if (!npc) return null;
+
+  var card = el('article', { class: 'c-postcard', style: 'cursor:pointer;' });
+  card.addEventListener('click', function(){
+    location.hash = '#/post/' + post.postId;
+  });
+
+  var header = el('div', { class: 'c-postcard__header' });
+
+  var avatarHolder = el('div');
+  avatarHolder.appendChild(renderAvatar('', 'md'));
+  header.appendChild(avatarHolder);
+
+  var metaBlock = el('div', { class: 'c-postcard__meta-block' });
+  var userRow = el('div', { class: 'c-postcard__user' });
+  userRow.appendChild(el('span', {}, ['@' + npc.username]));
+  var typesHolder = el('span', { 'data-role': 'types' });
+  userRow.appendChild(typesHolder);
+  metaBlock.appendChild(userRow);
+
+  var metaRow = el('div', { class: 'c-postcard__meta', 'data-role': 'meta' }, ['· ' + (post.relativeTime || '')]);
+  metaBlock.appendChild(metaRow);
+
+  header.appendChild(metaBlock);
+
+  var menu = el('div', { class: 'c-postcard__menu' }, ['···']);
+  header.appendChild(menu);
+
+  card.appendChild(header);
+
+  card.appendChild(el('div', { class: 'c-postcard__body' }, [post.body || '']));
+
+  if (post.hasPhoto) {
+    card.appendChild(el('div', { class: 'c-postcard__photo' }, ['PHOTO PH']));
+  }
+
+  var reactions = el('div', { class: 'c-postcard__reactions' });
+  reactions.appendChild(el('span', {}, ['♡ ' + (post.likes || 0)]));
+  reactions.appendChild(el('span', {}, ['💬 ' + (post.commentsCount || 0)]));
+  reactions.appendChild(el('span', {}, ['↻ ' + (post.retweets || 0)]));
+  card.appendChild(reactions);
+
+  pokeApi.fetchPokemon(post.authorNpcId).then(function(p){
+    try {
+      var newAvatar = renderAvatar(p.spriteUrl, 'md');
+      avatarHolder.innerHTML = '';
+      avatarHolder.appendChild(newAvatar);
+    } catch (e) { console.warn('avatar swap failed', e); }
+    try {
+      typesHolder.innerHTML = '';
+      var keys = p.typeKeys || [];
+      var jaTypes = p.types || [];
+      for (var i = 0; i < keys.length; i++) {
+        var ja = jaTypes[i] || keys[i];
+        typesHolder.appendChild(renderPill(ja, keys[i]));
+      }
+    } catch (e) { console.warn('types swap failed', e); }
+    try {
+      metaRow.textContent = (p.jaName || '') + ' · ' + (post.relativeTime || '');
+    } catch (e) { console.warn('meta swap failed', e); }
+  }).catch(function(err){
+    console.warn('fetchPokemon failed for npc', post.authorNpcId, err);
+  });
+
+  return card;
+}
+
+function buildSelfPostCard(post, partner) {
+  var card = el('article', { class: 'c-postcard', style: 'cursor:pointer;' });
+  card.addEventListener('click', function(){
+    location.hash = '#/post/' + post.postId;
+  });
+
+  var header = el('div', { class: 'c-postcard__header' });
+
+  var avatarHolder = el('div');
+  var spriteUrl = (partner && partner.spriteUrl) ? partner.spriteUrl : '';
+  avatarHolder.appendChild(renderAvatar(spriteUrl, 'md'));
+  header.appendChild(avatarHolder);
+
+  var metaBlock = el('div', { class: 'c-postcard__meta-block' });
+  var userRow = el('div', { class: 'c-postcard__user' });
+  var username = (partner && partner.username) ? partner.username : 'me';
+  userRow.appendChild(el('span', {}, ['@' + username]));
+  if (partner && partner.typeKeys) {
+    var jaTypes = partner.types || [];
+    for (var i = 0; i < partner.typeKeys.length; i++) {
+      var ja = jaTypes[i] || partner.typeKeys[i];
+      userRow.appendChild(renderPill(ja, partner.typeKeys[i]));
+    }
+  }
+  metaBlock.appendChild(userRow);
+
+  var species = (partner && partner.species) ? partner.species : '';
+  metaBlock.appendChild(el('div', { class: 'c-postcard__meta' }, [species + ' · いま']));
+
+  header.appendChild(metaBlock);
+  header.appendChild(el('div', { class: 'c-postcard__menu' }, ['···']));
+  card.appendChild(header);
+
+  card.appendChild(el('div', { class: 'c-postcard__body' }, [post.body || '']));
+
+  var reactions = el('div', { class: 'c-postcard__reactions' });
+  reactions.appendChild(el('span', {}, ['♡ 0']));
+  reactions.appendChild(el('span', {}, ['💬 0']));
+  reactions.appendChild(el('span', {}, ['↻ 0']));
+  card.appendChild(reactions);
+
+  return card;
+}
+
+function renderPostDetail(postId) {
+  var isNpc = typeof postId === 'string' && postId.indexOf('npc-') === 0;
+  var post = null;
+  var partner = null;
+  try { partner = storage.getPartner(); } catch (e) { partner = null; }
+
+  if (isNpc) {
+    post = (typeof NPC_POSTS !== 'undefined' && NPC_POSTS) ? NPC_POSTS.find(function(p){ return p.postId === postId; }) : null;
+  } else {
+    var myPosts = [];
+    try { myPosts = storage.getPosts() || []; } catch (e) { myPosts = []; }
+    post = myPosts.find(function(p){ return p.postId === postId; });
+  }
+
+  var backLeft = el('span', { style: 'cursor:pointer;' }, ['[< もどる]']);
+  backLeft.addEventListener('click', function(){
+    if (history.length > 1) history.back(); else location.hash = '#/timeline';
+  });
+  var center = el('span', {}, ['とうこう']);
+  var right = el('span', {}, ['[···]']);
+
+  if (!post) {
+    var errBody = el('div', { class: 's-detail', style: 'padding:12px;' });
+    errBody.appendChild(el('div', {}, ['投稿が見つかりません']));
+    var backBtn = renderButton('もどる', 'secondary', function(){
+      if (history.length > 1) history.back(); else location.hash = '#/timeline';
+    });
+    errBody.appendChild(backBtn);
+    mountScreen({
+      url: '/p/' + postId,
+      appBar: { left: backLeft, center: center, right: right },
+      body: errBody,
+      tabActiveIndex: null
+    });
+    return;
+  }
+
+  var wrap = el('div', { class: 's-detail' });
+  var scroll = el('div', { class: 's-detail__scroll' });
+
+  var postWrap = el('article', { class: 's-detail__post c-postcard' });
+
+  var header = el('div', { class: 'c-postcard__header' });
+  var avatarHolder = el('div');
+
+  var initialSprite = '';
+  var initialUsername = '';
+  var initialSpecies = '';
+  var initialTypeKeys = [];
+  var initialTypeJa = [];
+
+  if (isNpc) {
+    var npc = NPC_LIST.find(function(n){ return n.pokemonId === post.authorNpcId; });
+    if (npc) {
+      initialUsername = npc.username || '';
+    }
+  } else {
+    if (partner) {
+      initialSprite = partner.spriteUrl || '';
+      initialUsername = partner.username || 'me';
+      initialSpecies = partner.species || '';
+      initialTypeKeys = partner.typeKeys || [];
+      initialTypeJa = partner.types || [];
+    }
+  }
+
+  avatarHolder.appendChild(renderAvatar(initialSprite, 'lg'));
+  header.appendChild(avatarHolder);
+
+  var metaBlock = el('div', { class: 'c-postcard__meta-block' });
+  var userRow = el('div', { class: 'c-postcard__user' });
+  userRow.appendChild(el('span', {}, ['@' + initialUsername]));
+  var typesHolder = el('span', { 'data-role': 'types' });
+  for (var ti = 0; ti < initialTypeKeys.length; ti++) {
+    typesHolder.appendChild(renderPill(initialTypeJa[ti] || initialTypeKeys[ti], initialTypeKeys[ti]));
+  }
+  userRow.appendChild(typesHolder);
+  metaBlock.appendChild(userRow);
+
+  var metaRow = el('div', { class: 'c-postcard__meta' }, [initialSpecies + (post.relativeTime ? ' · ' + post.relativeTime : (isNpc ? '' : ' · いま'))]);
+  metaBlock.appendChild(metaRow);
+
+  header.appendChild(metaBlock);
+
+  var followBtn = el('button', { class: 's-detail__follow-btn c-button c-button--secondary' }, ['FOLLOW']);
+  followBtn.addEventListener('click', function(e){ e.stopPropagation(); });
+  header.appendChild(followBtn);
+
+  postWrap.appendChild(header);
+
+  postWrap.appendChild(el('div', { class: 'c-postcard__body' }, [post.body || '']));
+
+  if (post.hasPhoto || (post.photos && post.photos.length > 0)) {
+    postWrap.appendChild(el('div', { class: 'c-postcard__photo' }, ['PHOTO PH']));
+  }
+
+  if (post.tags && post.tags.length > 0) {
+    var tagWrap = el('div', { class: 'c-postcard__tags', style: 'display:flex; flex-wrap:wrap; gap:6px;' });
+    for (var tg = 0; tg < post.tags.length; tg++) {
+      tagWrap.appendChild(el('span', { class: 'c-pill' }, [post.tags[tg]]));
+    }
+    postWrap.appendChild(tagWrap);
+  }
+
+  var reactions = el('div', { class: 's-detail__reactions' });
+  reactions.appendChild(el('span', {}, ['♡ ' + (post.likes || 0)]));
+  reactions.appendChild(el('span', {}, ['💬 ' + (post.commentsCount || 0)]));
+  reactions.appendChild(el('span', {}, ['↻ ' + (post.retweets || 0)]));
+  postWrap.appendChild(reactions);
+
+  scroll.appendChild(postWrap);
+
+  var comments = [];
+  if (isNpc) {
+    comments = (typeof NPC_COMMENTS !== 'undefined' && NPC_COMMENTS && NPC_COMMENTS[postId]) ? NPC_COMMENTS[postId] : [];
+  } else {
+    comments = [];
+  }
+
+  var commentsHead = el('div', { class: 's-detail__comments-head' }, ['コメント (' + comments.length + ')']);
+  scroll.appendChild(commentsHead);
+
+  for (var ci = 0; ci < comments.length; ci++) {
+    scroll.appendChild(buildCommentRow(comments[ci]));
+  }
+
+  wrap.appendChild(scroll);
+
+  var compose = el('div', { class: 's-detail__compose' });
+  compose.appendChild(renderAvatar(partner && partner.spriteUrl ? partner.spriteUrl : '', 'sm'));
+  compose.appendChild(el('input', { class: 's-detail__compose__input', type: 'text', placeholder: 'コメントする…' }));
+  var sendBtn = el('button', { class: 's-detail__compose__send' }, ['▶']);
+  sendBtn.addEventListener('click', function(){});
+  compose.appendChild(sendBtn);
+  wrap.appendChild(compose);
+
+  mountScreen({
+    url: '/p/' + postId,
+    appBar: { left: backLeft, center: center, right: right },
+    body: wrap,
+    tabActiveIndex: null
+  });
+
+  if (isNpc) {
+    pokeApi.fetchPokemon(post.authorNpcId).then(function(p){
+      try {
+        avatarHolder.innerHTML = '';
+        avatarHolder.appendChild(renderAvatar(p.spriteUrl, 'lg'));
+      } catch (e) { console.warn('detail avatar swap failed', e); }
+      try {
+        typesHolder.innerHTML = '';
+        var keys = p.typeKeys || [];
+        var jaTypes = p.types || [];
+        for (var i = 0; i < keys.length; i++) {
+          typesHolder.appendChild(renderPill(jaTypes[i] || keys[i], keys[i]));
+        }
+      } catch (e) { console.warn('detail types swap failed', e); }
+      try {
+        metaRow.textContent = (p.jaName || '') + (post.relativeTime ? ' · ' + post.relativeTime : '');
+      } catch (e) { console.warn('detail meta swap failed', e); }
+    }).catch(function(err){
+      console.warn('fetchPokemon failed for detail', post.authorNpcId, err);
+    });
+  }
+}
+
+function buildCommentRow(comment) {
+  var row = el('div', { class: 's-detail__comment' });
+  var avatarHolder = el('div');
+  avatarHolder.appendChild(renderAvatar('', 'sm'));
+  row.appendChild(avatarHolder);
+
+  var main = el('div', { class: 's-detail__comment__main' });
+  var nameRow = el('div', { style: 'display:flex; align-items:center; gap:6px; flex-wrap:wrap;' });
+  var npc = NPC_LIST.find(function(n){ return n.pokemonId === comment.authorNpcId; });
+  var initialUsername = npc ? npc.username : ('npc-' + comment.authorNpcId);
+  var nameEl = el('span', { class: 's-detail__comment__name' }, ['@' + initialUsername]);
+  var typesHolder = el('span', { 'data-role': 'types' });
+  nameRow.appendChild(nameEl);
+  nameRow.appendChild(typesHolder);
+  main.appendChild(nameRow);
+  main.appendChild(el('div', { class: 's-detail__comment__body' }, [comment.body || '']));
+  row.appendChild(main);
+
+  pokeApi.fetchPokemon(comment.authorNpcId).then(function(p){
+    try {
+      avatarHolder.innerHTML = '';
+      avatarHolder.appendChild(renderAvatar(p.spriteUrl, 'sm'));
+    } catch (e) { console.warn('comment avatar swap failed', e); }
+    try {
+      typesHolder.innerHTML = '';
+      var keys = p.typeKeys || [];
+      var jaTypes = p.types || [];
+      for (var i = 0; i < keys.length; i++) {
+        typesHolder.appendChild(renderPill(jaTypes[i] || keys[i], keys[i]));
+      }
+    } catch (e) { console.warn('comment types swap failed', e); }
+  }).catch(function(err){
+    console.warn('fetchPokemon failed for comment', comment.authorNpcId, err);
+  });
+
+  return row;
+}
+function renderPostCompose() {
+  const partner = storage.getPartner();
+  if (!partner) {
+    location.hash = '#/onboarding';
+    return;
+  }
+
+  let body = '';
+  let mood = 'ごきげん';
+  let tags = [];
+  const presetTags = ['#ひるね', '#くさむら'];
+
+  const counterEl = el('div', { class: 's-compose__counter' }, ['のこり 140 / 140']);
+
+  const textarea = el('textarea', {
+    class: 's-compose__textarea',
+    placeholder: 'きょうの きぶんを かいて…',
+    maxlength: '140',
+  });
+
+  const postBtn = el('button', { class: 'c-button c-button--primary s-compose__post-btn is-disabled' }, ['[ POST ]']);
+
+  function updateCounter() {
+    const remain = 140 - body.length;
+    counterEl.textContent = 'のこり ' + remain + ' / 140';
+    if (remain <= 0) {
+      counterEl.classList.add('is-warn');
+    } else {
+      counterEl.classList.remove('is-warn');
+    }
+    if (body.trim() === '') {
+      postBtn.classList.add('is-disabled');
+    } else {
+      postBtn.classList.remove('is-disabled');
+    }
+  }
+
+  textarea.addEventListener('input', function (e) {
+    body = e.target.value;
+    updateCounter();
+  });
+
+  postBtn.addEventListener('click', function () {
+    if (body.trim() === '') return;
+    storage.addPost({
+      postId: 'self-' + Date.now(),
+      body: body.trim(),
+      tags: tags.slice(),
+      mood: mood,
+      photos: [],
+      createdAt: Date.now(),
+      author: 'self',
+    });
+    location.hash = '#/timeline';
+  });
+
+  const authorBlock = el('div', { class: 's-compose__author' }, [
+    renderAvatar(partner.spriteUrl, 'md'),
+    el('div', {}, [
+      el('div', { class: 's-compose__author__name' }, ['@' + partner.username]),
+      el('div', { class: 's-compose__author__species' }, [partner.species]),
+    ]),
+    el('div', { class: 's-compose__author__visibility' }, [
+      el('span', { class: 'c-pill' }, ['🌐 ぜんたい公開 ▾']),
+    ]),
+  ]);
+
+  const photoPlaceholders = [];
+  for (let i = 0; i < 4; i++) {
+    photoPlaceholders.push(el('div', { class: 's-compose__photo-ph' }, ['+ photo']));
+  }
+  const photosBlock = el('div', { class: 's-compose__photos' }, photoPlaceholders);
+
+  const tagPills = [];
+  presetTags.forEach(function (t) {
+    const pill = el('span', { class: 'c-pill' }, [t]);
+    pill.addEventListener('click', function () {
+      const idx = tags.indexOf(t);
+      if (idx >= 0) {
+        tags.splice(idx, 1);
+        pill.classList.remove('is-active');
+      } else {
+        tags.push(t);
+        pill.classList.add('is-active');
+      }
+    });
+    tagPills.push(pill);
+  });
+  const tagAdd = el('span', { class: 's-compose__tag-add' }, ['+ タグ追加']);
+  tagPills.push(tagAdd);
+  const tagsBlock = el('div', { class: 's-compose__tags' }, tagPills);
+
+  const moodLabels = ['ごきげん', 'ねむい', 'おこ'];
+  const moodEls = [];
+  moodLabels.forEach(function (m) {
+    const cls = 's-compose__mood' + (m === mood ? ' is-active' : '');
+    const moodEl = el('span', { class: cls }, [m]);
+    moodEl.addEventListener('click', function () {
+      mood = m;
+      moodEls.forEach(function (other, idx) {
+        if (moodLabels[idx] === m) {
+          other.classList.add('is-active');
+        } else {
+          other.classList.remove('is-active');
+        }
+      });
+    });
+    moodEls.push(moodEl);
+  });
+  const moodsBlock = el('div', { class: 's-compose__moods' }, moodEls);
+
+  const composeBody = el('div', { class: 's-compose' }, [
+    authorBlock,
+    textarea,
+    photosBlock,
+    tagsBlock,
+    moodsBlock,
+    counterEl,
+  ]);
+
+  const cancelBtn = el('span', { class: 'c-appbar__btn c-appbar__btn--soft', style: 'cursor:pointer;' }, ['[× CANCEL]']);
+  cancelBtn.addEventListener('click', function () {
+    location.hash = '#/timeline';
+  });
+
+  const titleEl = el('span', {
+    style: 'font-family: var(--font-jp); font-size: 11px; color: var(--color-ink);',
+  }, ['しんき とうこう']);
+
+  mountScreen({
+    url: '/post',
+    appBar: {
+      left: cancelBtn,
+      center: titleEl,
+      right: postBtn,
+    },
+    body: composeBody,
+    tabActiveIndex: null,
+  });
+}
+function renderProfile() {
+  const partner = storage.getPartner();
+  if (!partner) {
+    location.hash = '#/onboarding';
+    return;
+  }
+
+  const posts = storage.getPosts() || [];
+
+  const header = el('div', { class: 's-profile__header' }, [
+    renderAvatar(partner.spriteUrl, 'lg'),
+    el('div', { class: 's-profile__name' }, [partner.nickname]),
+    el('div', { class: 's-profile__username' }, ['@' + partner.username]),
+    el('div', { class: 's-profile__badges' },
+      (partner.types || []).map((ja, i) => renderPill(ja, (partner.typeKeys || [])[i]))
+        .concat([el('span', { class: 's-profile__lv' }, ['Lv 12'])])
+    ),
+  ]);
+
+  const bioText = 'くさむらが すきな ' + partner.species + '。きょうも まったり。';
+  const bio = el('div', { class: 's-profile__bio' }, [bioText]);
+
+  const stats = el('div', { class: 's-profile__stats' }, [
+    el('div', { class: 's-profile__stat' }, [
+      el('div', { class: 's-profile__stat__num' }, [String(posts.length)]),
+      el('div', { class: 's-profile__stat__label' }, ['とうこう']),
+    ]),
+    el('div', { class: 's-profile__stat' }, [
+      el('div', { class: 's-profile__stat__num' }, ['240']),
+      el('div', { class: 's-profile__stat__label' }, ['フォロワー']),
+    ]),
+    el('div', { class: 's-profile__stat' }, [
+      el('div', { class: 's-profile__stat__num' }, ['89']),
+      el('div', { class: 's-profile__stat__label' }, ['フォローちゅう']),
+    ]),
+  ]);
+
+  const btns = el('div', { class: 's-profile__btns' }, [
+    renderButton('プロフ編集', 'secondary', function () {}),
+    renderButton('図鑑を見る', 'secondary', function () { location.hash = '#/zukan'; }),
+  ]);
+
+  const segment = el('div', { class: 's-profile__segment' }, [
+    el('div', { class: 'c-segment' }, [
+      el('div', { class: 'c-segment__item is-active' }, ['とうこう']),
+      el('div', { class: 'c-segment__item' }, ['メディア']),
+      el('div', { class: 'c-segment__item' }, ['いいね']),
+    ]),
+  ]);
+
+  let grid;
+  if (!posts.length) {
+    grid = el('div', { class: 's-profile__grid' }, [
+      el('div', { class: 's-profile__empty', style: 'grid-column: 1 / -1;' }, ['まだ とうこうが ないみたい']),
+    ]);
+  } else {
+    grid = el('div', { class: 's-profile__grid' },
+      posts.map(function (p) {
+        const text = (p && p.body ? String(p.body) : '').slice(0, 24);
+        const thumb = el('div', { class: 's-profile__thumb', style: 'cursor:pointer;' }, [text]);
+        thumb.addEventListener('click', function () { location.hash = '#/post/' + p.postId; });
+        return thumb;
+      })
+    );
+  }
+
+  const body = el('div', { class: 's-profile' }, [header, bio, stats, btns, segment, grid]);
+
+  const settingsLeft = el('span', { class: 'c-appbar__btn c-appbar__btn--soft' }, ['[⚙]']);
+  const titleCenter = el('span', {}, ['マイページ']);
+  const shareRight = el('span', { class: 'c-appbar__btn c-appbar__btn--soft' }, ['[共有]']);
+
+  mountScreen({
+    url: '/me',
+    appBar: { left: settingsLeft, center: titleCenter, right: shareRight },
+    body: body,
+    tabActiveIndex: 4,
+  });
+}
+
+function renderZukan() {
+  const partner = storage.getPartner();
+  const seen = storage.getSeen() || [];
+
+  const targetIds = Array.from(new Set(
+    (typeof NPC_LIST !== 'undefined' ? NPC_LIST.map(function (n) { return n.pokemonId; }) : [])
+      .concat(partner ? [partner.pokemonId] : [])
+  )).sort(function (a, b) { return a - b; });
+
+  const total = targetIds.length;
+  const seenSet = {};
+  seen.forEach(function (id) { seenSet[id] = true; });
+  const seenCount = targetIds.filter(function (id) { return seenSet[id]; }).length;
+
+  const fetchCache = {};
+  let activeFilter = 'ALL';
+
+  const grid = el('div', { class: 's-zukan__grid' }, []);
+
+  function buildCell(id) {
+    const isSeen = !!seenSet[id];
+    const idLabel = el('div', { class: 's-zukan__id' }, ['#' + String(id).padStart(3, '0')]);
+    const spritePh = el('div', { class: 's-zukan__sprite' + (isSeen ? '' : ' s-zukan__sprite-silhouette') }, []);
+    const nameEl = el('div', { class: 's-zukan__name' }, [isSeen ? '...' : '???']);
+    const typesEl = el('div', { class: 's-zukan__types' }, []);
+    const cell = el('div', {
+      class: 's-zukan__cell' + (isSeen ? '' : ' is-unseen'),
+      dataset: { id: String(id) },
+    }, [idLabel, spritePh, nameEl, typesEl]);
+
+    pokeApi.fetchPokemon(id).then(function (data) {
+      fetchCache[id] = data;
+      const img = el('img', {
+        class: 's-zukan__sprite' + (isSeen ? '' : ' s-zukan__sprite-silhouette'),
+        src: data.spriteUrl || '',
+        alt: data.jaName || ('#' + id),
+      });
+      cell.replaceChild(img, spritePh);
+      if (isSeen) {
+        nameEl.textContent = data.jaName || '???';
+        while (typesEl.firstChild) typesEl.removeChild(typesEl.firstChild);
+        (data.types || []).forEach(function (ja, i) {
+          typesEl.appendChild(renderPill(ja, (data.typeKeys || [])[i]));
+        });
+      }
+      applyFilter();
+    }).catch(function (err) {
+      console.warn('fetchPokemon failed for id=' + id, err);
+    });
+
+    return cell;
+  }
+
+  function applyFilter() {
+    const cells = grid.children;
+    for (let i = 0; i < cells.length; i++) {
+      const cell = cells[i];
+      const id = Number(cell.dataset.id);
+      const isSeen = !!seenSet[id];
+      const data = fetchCache[id];
+      let show = true;
+      if (activeFilter === 'ALL') {
+        show = true;
+      } else {
+        if (!isSeen || !data) {
+          show = false;
+        } else {
+          const keys = (data.typeKeys || []).map(function (k) { return String(k).toLowerCase(); });
+          if (activeFilter === 'grass') show = keys.indexOf('grass') >= 0;
+          else if (activeFilter === 'fire') show = keys.indexOf('fire') >= 0;
+          else if (activeFilter === 'water') show = keys.indexOf('water') >= 0;
+          else if (activeFilter === 'other') {
+            show = keys.length > 0 && keys.indexOf('grass') < 0 && keys.indexOf('fire') < 0 && keys.indexOf('water') < 0;
+          }
+        }
+      }
+      cell.style.display = show ? '' : 'none';
+    }
+  }
+
+  targetIds.forEach(function (id) { grid.appendChild(buildCell(id)); });
+
+  const segmentItems = [
+    { key: 'ALL', label: 'ALL' },
+    { key: 'grass', label: 'くさ' },
+    { key: 'fire', label: 'ほのお' },
+    { key: 'water', label: 'みず' },
+    { key: 'other', label: '他' },
+  ];
+  const segmentEls = segmentItems.map(function (it) {
+    const node = el('div', {
+      class: 'c-segment__item' + (it.key === 'ALL' ? ' is-active' : ''),
+      dataset: { key: it.key },
+    }, [it.label]);
+    node.addEventListener('click', function () {
+      activeFilter = it.key;
+      segmentEls.forEach(function (n) {
+        n.className = 'c-segment__item' + (n.dataset.key === activeFilter ? ' is-active' : '');
+      });
+      applyFilter();
+    });
+    return node;
+  });
+
+  const progressFill = el('div', { class: 's-zukan__progress__fill', style: { width: (total ? (seenCount / total * 100) : 0) + '%' } });
+  const progress = el('div', { class: 's-zukan__progress' }, [progressFill]);
+  const filter = el('div', { class: 's-zukan__filter' }, [progress, el('div', { class: 'c-segment' }, segmentEls)]);
+
+  const scroll = el('div', { class: 's-zukan__scroll' }, [filter, grid]);
+  const body = el('div', { class: 's-zukan' }, [scroll]);
+
+  const backLeft = el('span', { class: 'c-appbar__btn', style: 'cursor:pointer;' }, ['[<]']);
+  backLeft.addEventListener('click', function () { location.hash = '#/profile'; });
+  const titleCenter = el('span', {}, ['ずかん']);
+  const countRight = el('span', { class: 's-zukan__count' }, [seenCount + ' / ' + total]);
+
+  mountScreen({
+    url: '/zukan',
+    appBar: { left: backLeft, center: titleCenter, right: countRight },
+    body: body,
+    tabActiveIndex: null,
+  });
+}
+  </script>
+</body>
+</html>
