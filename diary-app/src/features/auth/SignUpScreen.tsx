@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { AuthStackParamList } from '../../app/navigation/AuthStack';
 import { signUp } from '../../services/authService';
+import { colors, borderRadius } from '../../utils/theme';
 
 type SignUpNav = NativeStackNavigationProp<AuthStackParamList, 'SignUp'>;
 
@@ -71,10 +72,10 @@ export function SignUpScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: '#faf5e6' },
-  title: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 32, color: '#1a1612' },
-  input: { borderWidth: 1, borderColor: '#c8c0a8', borderRadius: 8, padding: 12, fontSize: 16, marginBottom: 16, backgroundColor: '#fff', color: '#1a1612' },
-  button: { backgroundColor: '#5b8a3a', padding: 14, borderRadius: 8, alignItems: 'center', marginBottom: 16 },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  link: { color: '#5b8a3a', textAlign: 'center', fontSize: 14 },
+  container: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: colors.paper2 },
+  title: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 32, color: colors.ink },
+  input: { borderWidth: 1, borderColor: colors.rule, borderRadius: borderRadius.md, padding: 12, fontSize: 16, marginBottom: 16, backgroundColor: colors.white, color: colors.ink },
+  button: { backgroundColor: colors.grass, padding: 14, borderRadius: borderRadius.md, alignItems: 'center', marginBottom: 16 },
+  buttonText: { color: colors.white, fontSize: 16, fontWeight: 'bold' },
+  link: { color: colors.grass, textAlign: 'center', fontSize: 14 },
 });

@@ -1,7 +1,8 @@
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useState } from 'react';
+import { colors, borderRadius } from '../../utils/theme';
 
-const EMOJIS = [
+export const EMOJIS = [
   '😊', '😢', '😡', '🥰', '😴', '🤔', '😎', '🥳',
   '🌟', '☀️', '🌙', '🌸', '🍀', '🎉', '❤️', '🔥',
   '📖', '✏️', '📷', '🎵', '🎨', '🏃', '🍰', '☕',
@@ -39,10 +40,10 @@ export function EmojiPicker({ selected, onSelect }: EmojiPickerProps) {
 }
 
 const styles = StyleSheet.create({
-  trigger: { borderWidth: 1, borderColor: '#c8c0a8', borderRadius: 8, padding: 12, backgroundColor: '#fff', alignItems: 'center' },
+  trigger: { borderWidth: 1, borderColor: colors.rule, borderRadius: borderRadius.md, padding: 12, backgroundColor: colors.white, alignItems: 'center' },
   triggerText: { fontSize: 24 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 8, gap: 6 },
-  item: { width: '12.5%', aspectRatio: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 8, backgroundColor: '#fff', borderWidth: 1, borderColor: '#c8c0a8' },
-  selected: { borderColor: '#5b8a3a', backgroundColor: '#cfe1b8' },
+  item: { width: '12.5%', aspectRatio: 1, justifyContent: 'center', alignItems: 'center', borderRadius: borderRadius.md, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.rule },
+  selected: { borderColor: colors.grass, backgroundColor: colors.grassSoft },
   emoji: { fontSize: 24 },
 });

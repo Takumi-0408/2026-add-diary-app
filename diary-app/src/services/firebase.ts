@@ -1,7 +1,6 @@
 import { initializeApp, FirebaseApp } from 'firebase/app';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { getFirestore, Firestore, enableIndexedDbPersistence } from 'firebase/firestore';
 import { getAuth, Auth } from 'firebase/auth';
-import { getStorage, FirebaseStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -15,14 +14,19 @@ const firebaseConfig = {
 let app: FirebaseApp;
 let db: Firestore;
 let auth: Auth;
-let storage: FirebaseStorage;
 
 export function initializeFirebase(): void {
   if (!app) {
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
     auth = getAuth(app);
-    storage = getStorage(app);
+    enableIndexedDbPersistence(db).catch((err) => {
+      if (err.code === 'failed-precondition') {
+        console.warn('Firestore persistence: multiple tabs open, persistence disabled');
+      } else if (err.code === 'unimplemented') {
+        console.warn('Firestore persistence: not supported in this environment');
+      }
+    });
   }
 }
 
@@ -34,9 +38,4 @@ export function getDb(): Firestore {
 export function getAuthInstance(): Auth {
   if (!auth) throw new Error('Firebase not initialized. Call initializeFirebase() first.');
   return auth;
-}
-
-export function getStorageInstance(): FirebaseStorage {
-  if (!storage) throw new Error('Firebase not initialized. Call initializeFirebase() first.');
-  return storage;
 }

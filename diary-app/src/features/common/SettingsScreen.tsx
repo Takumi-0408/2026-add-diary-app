@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { getAuth } from 'firebase/auth';
 import { logOut } from '../../services/authService';
+import { colors } from '../../utils/theme';
 
 export function SettingsScreen() {
   const user = getAuth().currentUser;
@@ -39,12 +40,12 @@ export function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#faf5e6' },
-  header: { padding: 16, paddingTop: 48, backgroundColor: '#faf5e6', borderBottomWidth: 1, borderBottomColor: '#c8c0a8' },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#1a1612' },
-  section: { padding: 16, borderBottomWidth: 1, borderBottomColor: '#c8c0a8' },
-  label: { fontSize: 12, color: '#a39e8e', marginBottom: 4 },
-  value: { fontSize: 16, color: '#1a1612' },
+  container: { flex: 1, backgroundColor: colors.paper2 },
+  header: { padding: 16, paddingTop: 48, backgroundColor: colors.paper2, borderBottomWidth: 1, borderBottomColor: colors.rule },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: colors.ink },
+  section: { padding: 16, borderBottomWidth: 1, borderBottomColor: colors.rule },
+  label: { fontSize: 12, color: colors.inkFaint, marginBottom: 4 },
+  value: { fontSize: 16, color: colors.ink },
   logoutBtn: { padding: 16, alignItems: 'center', marginTop: 32 },
-  logoutBtnText: { color: '#d97757', fontSize: 14 },
+  logoutBtnText: { color: colors.coral, fontSize: 14 },
 });

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, Alert, Image, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -6,6 +6,7 @@ import { DiaryStackParamList } from '../../app/navigation/DiaryStack';
 import { fetchDiaryById, deleteDiary } from '../../services/diaryService';
 import { Diary } from '../../types';
 import { formatDateTime } from '../../utils';
+import { colors, borderRadius } from '../../utils/theme';
 
 type DetailRoute = RouteProp<DiaryStackParamList, 'DiaryDetail'>;
 type DetailNav = NativeStackNavigationProp<DiaryStackParamList, 'DiaryDetail'>;
@@ -59,9 +60,6 @@ export function DiaryDetailScreen() {
         <Text style={styles.title}>{diary.title}</Text>
         <Text style={styles.date}>{formatDateTime(diary.date)}</Text>
         <Text style={styles.body}>{diary.body}</Text>
-        {diary.imageUrl && (
-          <Image source={{ uri: diary.imageUrl }} style={styles.image} />
-        )}
       </View>
       <TouchableOpacity onPress={handleDelete} style={styles.deleteBtn}>
         <Text style={styles.deleteBtnText}>削除</Text>
@@ -71,18 +69,17 @@ export function DiaryDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#faf5e6' },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#faf5e6' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, paddingTop: 48, backgroundColor: '#faf5e6', borderBottomWidth: 1, borderBottomColor: '#c8c0a8' },
-  backBtn: { fontSize: 14, color: '#a39e8e' },
-  editBtn: { fontSize: 16, color: '#5b8a3a', fontWeight: 'bold' },
+  container: { flex: 1, backgroundColor: colors.paper2 },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.paper2 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, paddingTop: 48, backgroundColor: colors.paper2, borderBottomWidth: 1, borderBottomColor: colors.rule },
+  backBtn: { fontSize: 14, color: colors.inkFaint },
+  editBtn: { fontSize: 16, color: colors.grass, fontWeight: 'bold' },
   content: { padding: 16 },
   icon: { fontSize: 48, textAlign: 'center', marginBottom: 16 },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#1a1612', marginBottom: 8 },
-  date: { fontSize: 14, color: '#a39e8e', marginBottom: 24 },
-  body: { fontSize: 16, lineHeight: 24, color: '#1a1612', marginBottom: 24 },
-  image: { width: '100%', height: 300, borderRadius: 8, marginBottom: 24 },
+  title: { fontSize: 24, fontWeight: 'bold', color: colors.ink, marginBottom: 8 },
+  date: { fontSize: 14, color: colors.inkFaint, marginBottom: 24 },
+  body: { fontSize: 16, lineHeight: 24, color: colors.ink, marginBottom: 24 },
   deleteBtn: { padding: 16, alignItems: 'center' },
-  deleteBtnText: { color: '#d97757', fontSize: 14 },
-  errorText: { fontSize: 16, color: '#a39e8e' },
+  deleteBtnText: { color: colors.coral, fontSize: 14 },
+  errorText: { fontSize: 16, color: colors.inkFaint },
 });

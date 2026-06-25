@@ -1,4 +1,4 @@
-import { getDb, getStorageInstance } from './firebase';
+import { getDb } from './firebase';
 import {
   collection,
   doc,
@@ -16,7 +16,6 @@ import {
   DocumentSnapshot,
   serverTimestamp,
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { Diary, DiaryInput } from '../types';
 
 const DIARIES_COLLECTION = 'diaries';
@@ -93,50 +92,56 @@ export async function updateDiary(diaryId: string, input: Partial<DiaryInput>): 
 
 export async function deleteDiary(diaryId: string): Promise<void> {
   const db = getDb();
-  const diary = await fetchDiaryById(diaryId);
-  if (diary.imageUrl) {
-    const storage = getStorageInstance();
-    const imageRef = ref(storage, diary.imageUrl);
-    try {
-      await deleteObject(imageRef);
-    } catch {
-      // ignore if image already deleted
-    }
-  }
   await deleteDoc(doc(db, DIARIES_COLLECTION, diaryId));
-}
-
-export async function uploadImage(userId: string, uri: string): Promise<string> {
-  const storage = getStorageInstance();
-  const response = await fetch(uri);
-  const blob = await response.blob();
-  const filename = `${userId}/${Date.now()}.jpg`;
-  const storageRef = ref(storage, `images/${filename}`);
-  await uploadBytes(storageRef, blob);
-  return await getDownloadURL(storageRef);
 }
 
 export async function searchDiaries(
   userId: string,
   keyword: string
 ): Promise<Diary[]> {
+  return searchDiariesAdvanced(userId, { keyword });
+}
+
+export async function searchDiariesAdvanced(
+  userId: string,
+  options: {
+    keyword?: string;
+    startDate?: Date;
+    endDate?: Date;
+    emoji?: string;
+  }
+): Promise<Diary[]> {
   const db = getDb();
-  const q = query(
-    collection(db, DIARIES_COLLECTION),
+  const constraints: any[] = [
     where('userId', '==', userId),
-    orderBy('date', 'desc')
-  );
+    orderBy('date', 'desc'),
+  ];
+  if (options.startDate) {
+    constraints.push(where('date', '>=', Timestamp.fromDate(options.startDate)));
+  }
+  if (options.endDate) {
+    const end = new Date(options.endDate);
+    end.setHours(23, 59, 59, 999);
+    constraints.push(where('date', '<=', Timestamp.fromDate(end)));
+  }
+  const q = query(collection(db, DIARIES_COLLECTION), ...constraints);
   const snapshot = await getDocs(q);
   const results: Diary[] = [];
   snapshot.forEach((docSnap) => {
     const diary = diaryFromSnapshot(docSnap);
-    const lowerKeyword = keyword.toLowerCase();
-    if (
-      diary.title.toLowerCase().includes(lowerKeyword) ||
-      diary.body.toLowerCase().includes(lowerKeyword)
-    ) {
-      results.push(diary);
+    if (options.keyword) {
+      const kw = options.keyword.toLowerCase();
+      if (
+        !diary.title.toLowerCase().includes(kw) &&
+        !diary.body.toLowerCase().includes(kw)
+      ) {
+        return;
+      }
     }
+    if (options.emoji && diary.icon !== options.emoji) {
+      return;
+    }
+    results.push(diary);
   });
   return results;
 }

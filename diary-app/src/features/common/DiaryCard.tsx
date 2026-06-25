@@ -1,6 +1,8 @@
-import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, View, StyleSheet, Animated } from 'react-native';
+import { useEffect, useRef } from 'react';
 import { Diary } from '../../types';
 import { formatDate } from '../../utils';
+import { colors, borderRadius, spacing } from '../../utils/theme';
 
 interface DiaryCardProps {
   diary: Diary;
@@ -8,8 +10,19 @@ interface DiaryCardProps {
 }
 
 export function DiaryCard({ diary, onPress }: DiaryCardProps) {
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [opacity]);
+
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
+    <Animated.View style={{ opacity }}>
+      <TouchableOpacity style={styles.card} onPress={onPress}>
       <View style={styles.row}>
         <Text style={styles.icon}>{diary.icon}</Text>
         <View style={styles.info}>
@@ -19,15 +32,16 @@ export function DiaryCard({ diary, onPress }: DiaryCardProps) {
       </View>
       <Text style={styles.body} numberOfLines={2}>{diary.body}</Text>
     </TouchableOpacity>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: '#fff', borderRadius: 12, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: '#c8c0a8' },
-  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  card: { backgroundColor: colors.white, borderRadius: borderRadius.lg, padding: spacing.lg, marginBottom: 10, borderWidth: 1, borderColor: colors.rule },
+  row: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm },
   icon: { fontSize: 28, marginRight: 10 },
   info: { flex: 1 },
-  title: { fontSize: 16, fontWeight: 'bold', color: '#1a1612' },
-  date: { fontSize: 12, color: '#a39e8e', marginTop: 2 },
-  body: { fontSize: 14, color: '#5a554a', lineHeight: 20 },
+  title: { fontSize: 16, fontWeight: 'bold', color: colors.ink },
+  date: { fontSize: 12, color: colors.inkFaint, marginTop: 2 },
+  body: { fontSize: 14, color: colors.inkSoft, lineHeight: 20 },
 });

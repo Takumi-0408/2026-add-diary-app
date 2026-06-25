@@ -1,11 +1,11 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
-import * as ImagePicker from 'expo-image-picker';
-import { createDiary, uploadImage } from '../../services/diaryService';
+import { createDiary } from '../../services/diaryService';
 import { validateDiaryForm } from '../../utils';
 import { EmojiPicker } from '../common/EmojiPicker';
+import { colors, borderRadius } from '../../utils/theme';
 
 export function DiaryCreateScreen() {
   const navigation = useNavigation();
@@ -13,11 +13,10 @@ export function DiaryCreateScreen() {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [date, setDate] = useState(new Date());
-  const [imageUri, setImageUri] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
 
   async function handleSave() {
-    const validation = validateDiaryForm({ icon, title, body, date, imageUrl: imageUri });
+    const validation = validateDiaryForm({ icon, title, body, date });
     if (!validation.isValid) {
       const firstError = Object.values(validation.errors)[0];
       Alert.alert('入力エラー', firstError);
@@ -27,11 +26,7 @@ export function DiaryCreateScreen() {
     try {
       const user = getAuth().currentUser;
       if (!user) return;
-      let imageUrl: string | undefined;
-      if (imageUri) {
-        imageUrl = await uploadImage(user.uid, imageUri);
-      }
-      await createDiary(user.uid, { icon, title, body, date, imageUrl });
+      await createDiary(user.uid, { icon, title, body, date });
       navigation.goBack();
     } catch (e: any) {
       Alert.alert('保存エラー', e.message);
@@ -69,41 +64,19 @@ export function DiaryCreateScreen() {
         <TextInput style={styles.input} value={date.toLocaleDateString('ja-JP')} editable={false} />
         <Text style={styles.label}>本文</Text>
         <TextInput style={styles.textArea} placeholder="今日の出来事を書こう" placeholderTextColor="#a39e8e" value={body} onChangeText={setBody} multiline maxLength={5000} />
-        {imageUri && (
-          <View>
-            <Image source={{ uri: imageUri }} style={styles.preview} />
-            <TouchableOpacity onPress={() => setImageUri(undefined)}>
-              <Text style={styles.removeBtn}>画像を削除</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        {!imageUri && (
-          <TouchableOpacity style={styles.imageBtn} onPress={async () => {
-            const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.8 });
-            if (!result.canceled && result.assets[0]) {
-              setImageUri(result.assets[0].uri);
-            }
-          }}>
-            <Text style={styles.imageBtnText}>画像を追加</Text>
-          </TouchableOpacity>
-        )}
       </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#faf5e6' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, paddingTop: 48, backgroundColor: '#faf5e6', borderBottomWidth: 1, borderBottomColor: '#c8c0a8' },
-  headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#1a1612' },
-  cancelBtn: { fontSize: 14, color: '#a39e8e' },
-  saveBtn: { fontSize: 16, color: '#5b8a3a', fontWeight: 'bold' },
+  container: { flex: 1, backgroundColor: colors.paper2 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, paddingTop: 48, backgroundColor: colors.paper2, borderBottomWidth: 1, borderBottomColor: colors.rule },
+  headerTitle: { fontSize: 18, fontWeight: 'bold', color: colors.ink },
+  cancelBtn: { fontSize: 14, color: colors.inkFaint },
+  saveBtn: { fontSize: 16, color: colors.grass, fontWeight: 'bold' },
   form: { padding: 16 },
-  label: { fontSize: 14, fontWeight: 'bold', color: '#1a1612', marginBottom: 8, marginTop: 16 },
-  input: { borderWidth: 1, borderColor: '#c8c0a8', borderRadius: 8, padding: 12, fontSize: 16, backgroundColor: '#fff', color: '#1a1612' },
-  textArea: { borderWidth: 1, borderColor: '#c8c0a8', borderRadius: 8, padding: 12, fontSize: 16, backgroundColor: '#fff', color: '#1a1612', minHeight: 200, textAlignVertical: 'top' },
-  preview: { width: '100%', height: 200, borderRadius: 8, marginTop: 12 },
-  imageBtn: { borderWidth: 1, borderColor: '#c8c0a8', borderRadius: 8, padding: 12, alignItems: 'center', marginTop: 12, borderStyle: 'dashed' },
-  imageBtnText: { color: '#a39e8e', fontSize: 14 },
-  removeBtn: { color: '#d97757', fontSize: 12, textAlign: 'center', marginTop: 8 },
+  label: { fontSize: 14, fontWeight: 'bold', color: colors.ink, marginBottom: 8, marginTop: 16 },
+  input: { borderWidth: 1, borderColor: colors.rule, borderRadius: borderRadius.md, padding: 12, fontSize: 16, backgroundColor: colors.white, color: colors.ink },
+  textArea: { borderWidth: 1, borderColor: colors.rule, borderRadius: borderRadius.md, padding: 12, fontSize: 16, backgroundColor: colors.white, color: colors.ink, minHeight: 200, textAlignVertical: 'top' },
 });

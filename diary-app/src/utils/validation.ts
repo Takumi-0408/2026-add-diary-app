@@ -8,7 +8,6 @@ export interface DiaryFormData {
   title: string;
   body: string;
   date: Date;
-  imageUrl?: string;
 }
 
 const TITLE_MAX = 50;
